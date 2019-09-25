@@ -61,6 +61,8 @@ int main(){
 //void loop() {
   printf("Testing Arazi\n");
   uECC_set_rng(&RNG);
+  while (true)
+  {
   const struct uECC_Curve_t * curve = uECC_secp192r1();
   uint8_t privateCA[24];
   uint8_t publicCA[48];
@@ -229,6 +231,8 @@ int main(){
     printf("Shared secrets are not identical!\n");
   } else {
     printf("Shared secrets are identical\n");
+  }
+  
   }
 	return 0;
 //}
