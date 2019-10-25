@@ -1,6 +1,11 @@
-#include <uECC_vli.h>
-#include <uECC.h>
-#include <types.h>
+#include "uECC_vli.h"
+#include "uECC.c"
+#include "types.h"
+#include <stdio.h>
+#include <string.h>
+#include <iostream>
+#include <iomanip>
+#include <stdlib.h>
 
 
 extern "C" {
@@ -12,11 +17,16 @@ static int RNG(uint8_t *dest, unsigned size) {
   while (size) {
     uint8_t val = 0;
     for (unsigned i = 0; i < 8; ++i) {
-      int init = analogRead(0);
-      int count = 0;
-      while (analogRead(0) == init) {
-        ++count;
-      }
+      //int init = analogRead(0);
+	  int init;
+	//init = i*100+i*i;
+	  //cin>>init;//between 0 and 1023
+	  //init = ((init%1024)+1024)%1024;
+      init = rand()%1024;//randomly generating numbers between 0 and 1023
+	  int count = 0;
+      //while (analogRead(0) == init) {
+       // ++count;
+      //}
       
       if (count == 0) {
          val = (val << 1) | (init & 0x01);
@@ -34,11 +44,14 @@ static int RNG(uint8_t *dest, unsigned size) {
 
 }  // extern "C"
 
-void setup() {
-  Serial.begin(115200);
-  Serial.print("Testing BPV ECDSA\n");
-  uECC_set_rng(&RNG);
+int main(){
 
+//void setup() {
+  //Serial.begin(115200);
+  //Serial.print("Testing BPV ECDSA\n");
+  printf("Testing Arazi\n");
+  uECC_set_rng(&RNG);
+  
   const struct uECC_Curve_t * curve = uECC_secp256r1();
   uint8_t privates[1024];
   uint8_t publics[2048];
@@ -57,29 +70,45 @@ void setup() {
   uint8_t hash[32] = {0};
   uint8_t sig[64] = {0};
   
-  unsigned long a = micros();
+  clock_t a,b; // for measuring time in seconds
+  //unsigned long a = micros();
+  a = clock();
   for (unsigned i = 0; i < 32; ++i) {
     uECC_make_key(public1, private1, curve);
     memcpy(publics + 64*i, public1, sizeof(public1));
     memcpy(privates + 32*i, private1, sizeof(private1));
   }
-  unsigned long b = micros();
+  //unsigned long b = micros();
+  b = clock();
   unsigned long clockcycle;
-  clockcycle = microsecondsToClockCycles(b-a);
-  Serial.print("Made key 1 in "); Serial.println(clockcycle);
-  a = micros();
+  //clockcycle = microsecondsToClockCycles(b-a);
+  double time1 = double(b-a)/double(CLOCKS_PER_SEC);
+  //Serial.print("Made key 1 in "); 
+  //Serial.println(clockcycle);
+  
+  printf("Made key 1 in "); 
+  cout<<fixed<<setprecision(9)<<time1<<"\n";
+  
+  //a = micros();
+  a = clock();
  // uECC_make_key(public2, private2, curve);
-  b = micros();
-  clockcycle = microsecondsToClockCycles(b-a);
-  Serial.print("Made key 2 in "); Serial.println(clockcycle);
+  //b = micros();
+  b = clock();
+  time1 = double(b-a)/double(CLOCKS_PER_SEC);
+  printf("Made key 2 in "); 
+  cout<<fixed<<setprecision(9)<<time1<<"\n";
+  
+  //clockcycle = microsecondsToClockCycles(b-a);
+  //Serial.print("Made key 2 in "); Serial.println(clockcycle);
 
   
   memcpy(hash, public1, sizeof(hash));
 
-  a = micros();
+  //a = micros();
 //  if (!uECC_sign(private1, hash, sizeof(hash), sig, curve)) {
 //     // printf("uECC_sign() failed\n");
 //   }
+  a = clock();
   uint8_t add[64];
   uint8_t add2[64];
 
@@ -117,19 +146,6 @@ void setup() {
 
   uECC_vli_nativeToBytes(k, 32, kVLI);
   
-//  Serial.print("kPUB = {");
-//  for (unsigned i = 0; i < 64; ++i) { 
-//     Serial.print("0x"); Serial.print(kPub[i], HEX); Serial.print(", ");
-//  }
-//  Serial.println("};");
-//
-//  uint8_t deneme[64];
-//  uECC_compute_public_key(k, deneme, curve);
-//  Serial.print("kPUBEquiv = {");
-//  for (unsigned i = 0; i < 64; ++i) { 
-//     Serial.print("0x"); Serial.print(deneme[i], HEX); Serial.print(", ");
-//  }
-//  Serial.println("};");
 
   uECC_vli_nativeToBytes(sig,32,kPub);
   modularInv(k, kVLI, curve);
@@ -150,23 +166,29 @@ void setup() {
   modularMult(k,r2,s,curve);
 
   uECC_vli_nativeToBytes(sig + 32, 32, s);
+  b = clock();
+  //b = micros();
+  //clockcycle = microsecondsToClockCycles(b-a);
+  time1 = double(b-a)/double(CLOCKS_PER_SEC);
+  
+  printf("Signing "); 
+  cout<<fixed<<setprecision(9)<<time1<<"\n";
+  
+  //Serial.print("Signing "); Serial.println(clockcycle);
 
-  b = micros();
-  clockcycle = microsecondsToClockCycles(b-a);
-  Serial.print("Signing "); Serial.println(clockcycle);
-
-  a = micros();
+  //a = micros();
+  a = clock();
   if (!uECC_verify(public1, hash, sizeof(hash), sig, curve)) {
      // printf("uECC_verify() failed\n");
   } 
-  b = micros();
-  clockcycle = microsecondsToClockCycles(b-a);
-  Serial.print("Verifying "); Serial.println(clockcycle);
-}
-
-void loop() {
- 
-
+  //b = micros();
+  b = clock();
+  //clockcycle = microsecondsToClockCycles(b-a);
+  time1 = double(b-a)/double(CLOCKS_PER_SEC);
+  printf("Verifying "); 
+  cout<<fixed<<setprecision(9)<<time1<<"\n";
   
-  
+  //Serial.print("Verifying "); Serial.println(clockcycle);
+//}
+  return 0;
 }

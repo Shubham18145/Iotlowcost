@@ -24,11 +24,14 @@ static int RNG(uint8_t *dest, unsigned size) {
 	  int init;
 	init = i*100+i*i;
 	  //cin>>init;//between 0 and 1023
-	  init = ((init%1024)+1024)%1024;
-      int count = 0;
+	 //init = i*100+i*i;
+	  //cin>>init;//between 0 and 1023
+	  //init = ((init%1024)+1024)%1024;
+      init = rand()%1024;//randomly generating numbers between 0 and 1023
       //while (analogRead(0) == init) {
        // ++count;
       //}
+	  int count = 0;
       
       if (count == 0) {
          val = (val << 1) | (init & 0x01);
@@ -45,8 +48,6 @@ static int RNG(uint8_t *dest, unsigned size) {
 }
 
 }  // extern "C"
-
-
 
 //SHA256 sha256;
 
