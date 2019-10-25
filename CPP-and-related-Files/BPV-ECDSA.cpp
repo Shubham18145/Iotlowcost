@@ -6,7 +6,8 @@
 #include <iostream>
 #include <iomanip>
 #include <stdlib.h>
-
+#include <iostream>
+using namespace std;
 
 extern "C" {
 
