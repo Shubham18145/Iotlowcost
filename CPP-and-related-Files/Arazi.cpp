@@ -23,7 +23,17 @@ static int RNG(uint8_t *dest, unsigned size) {
     for (unsigned i = 0; i < 8; ++i) {
       //int init = analogRead(0);
 	  int init;
+<<<<<<< HEAD
       init = (rand()%1024+1024)%1024;//randomly generating numbers between 0 and 1023
+=======
+	  init = (int)(rand()%1024+1024)%1024;
+	//init = i*100+i*i;
+	  //cin>>init;//between 0 and 1023
+	 init = i*100+i*i;
+	  //cin>>init;//between 0 and 1023
+	  //init = ((init%1024)+1024)%1024;
+      //init = (rand()+1024)%1024;//randomly generating numbers between 0 and 1023
+>>>>>>> 61965724ae4544c822410ead9fc35a57e5208f1b
       //while (analogRead(0) == init) {
        // ++count;
       //}
@@ -235,7 +245,10 @@ int main(){
   //totaltime = totaltime*1000000;
   
   cout<<fixed<<setprecision(3)<<totaltime<<"\n";
+<<<<<<< HEAD
   
+=======
+>>>>>>> 61965724ae4544c822410ead9fc35a57e5208f1b
   //cout<<"PointAlice1: "<<pointAlice1<<"\n";
   //cout<<"PointBob1: "<<pointBob1<<"\n";
   
