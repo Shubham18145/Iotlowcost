@@ -23,12 +23,12 @@ static int RNG(uint8_t *dest, unsigned size) {
     for (unsigned i = 0; i < 8; ++i) {
       //int init = analogRead(0);
 	  int init;
-      init = (int)(rand()%1024+1024)%1024;//randomly generating numbers between 0 and 1023
-      //while (analogRead(0) == init) {
+          init = (int)(((100*i+i*i)%1024)+1024)%1024;//randomly generating numbers between 0 and 1023
+          //cout<<init<<"\n";
+	//while (analogRead(0) == init) {
        // ++count;
       //}
 	  int count = 0;
-      
       if (count == 0) {
          val = (val << 1) | (init & 0x01);
       } else {
@@ -54,7 +54,7 @@ static int RNG(uint8_t *dest, unsigned size) {
 //}
 
 int main(){
-	
+
 //void loop() {
   printf("Testing Arazi\n");
   uECC_set_rng(&RNG);
@@ -64,7 +64,7 @@ int main(){
   const struct uECC_Curve_t * curve = uECC_secp192r1();
   uint8_t privateCA[24];
   uint8_t publicCA[48];
-  
+
   uint8_t privateAlice1[24];
   uint8_t privateAlice2[24];
 
@@ -92,11 +92,11 @@ int main(){
   uECC_make_key(publicCA, privateCA, curve);
   uECC_make_key(publicAlice1, privateAlice1, curve);
   uECC_make_key(publicBob1, privateBob1, curve);
-  
+
   //a = micros();
   a = clock();
   //unsigned char *SHA256(const unsigned char *d, size_t n, unsigned char *md)
-  
+
   /*sha256.reset();
   sha256.update(publicAlice1, sizeof(publicAlice1));
   sha256.finalize(hash, sizeof(hash));
@@ -107,7 +107,7 @@ int main(){
   //unsigned long clockcycle;
   //clockcycle = microsecondsToClockCycles(b-a);
   double time1 = double(b-a)/double(CLOCKS_PER_SEC);
-  
+
   //c = micros();
   c = clock();
   /*sha256.reset();
@@ -115,13 +115,13 @@ int main(){
   sha256.finalize(hash2, sizeof(hash2));
   */
   SHA256(publicBob1,sizeof(publicBob1),hash2);
-  
+
   //d = micros();
   d = clock();
   //unsigned long clockcycle2;
   //clockcycle2 = microsecondsToClockCycles(d-c);
 	double time2 = double(d-c)/double(CLOCKS_PER_SEC);
-  
+
 //  memcpy(hash, publicAlice1, sizeof(hash));
 //  memcpy(hash2, publicBob1, sizeof(hash2));
 
@@ -160,14 +160,14 @@ int main(){
   //b = micros();
   b = clock();
   time1 = time1+double(b-a)/double(CLOCKS_PER_SEC);
-  
+
   //clockcycle = clockcycle + microsecondsToClockCycles(b-a);
   if (!r) {
     //Serial.print("shared_secret() failed (1)\n");
 	printf("shared_secret() failed (1)\n");
     return 0;
   }
-  
+
   c = clock();
   //c = micros();
   r = uECC_shared_secret2(publicAlice2, privateBob2, pointBob2, curve);
@@ -179,8 +179,8 @@ int main(){
     printf("shared_secret() failed (1)\n");
     return 0;
   }
-  
-  
+
+
 
   r = uECC_shared_secret2(publicBob1, hash2, pointAlice1, curve);
   if (!r) {
@@ -193,7 +193,7 @@ int main(){
     printf("shared_secret() failed (1)\n");
     return 0;
   }
-  
+
   r = uECC_shared_secret2(publicAlice1, hash, pointBob1, curve);
   if (!r) {
     printf("shared_secret() failed (1)\n");
@@ -209,36 +209,36 @@ int main(){
   //clockcycle = clockcycle + microsecondsToClockCycles(b-a);
   b = clock();
   time1 = time1+double(b-a)/double(CLOCKS_PER_SEC);
-  
-  //printf("Arazi in: "); 
+
+  //printf("Arazi in: ");
   //cout<<fixed<<setprecision(9)<<time1<<"\n";
 
 
   //c = micros();
   c = clock();
-  
+
   EllipticAdd(pointBob1, pointBob2, pointBob1, curve);
-  
+
   //d = micros();
   //clockcycle2 = clockcycle2 + microsecondsToClockCycles(d-c);
-  
+
   d = clock();
   time2 = time2+double(d-c)/double(CLOCKS_PER_SEC);
-  
-  //printf("Arazi in: "); 
+
+  //printf("Arazi in: ");
   //cout<<fixed<<setprecision(9)<<time2<<"\n";
-  
+
   totaltime += time1+time2;
   loopcount +=1 ;
   printf("Total time taken till iteration: %d\n",loopcount);
-  
+
   //totaltime = totaltime*1000000;
-  
+
   cout<<fixed<<setprecision(3)<<totaltime<<"\n";
-  
+
   //cout<<"PointAlice1: "<<pointAlice1<<"\n";
   //cout<<"PointBob1: "<<pointBob1<<"\n";
-  
+
   if (memcmp(pointAlice1, pointBob1, 24) != 0) {
     printf("Shared secrets are not identical!\n");
   } else {
