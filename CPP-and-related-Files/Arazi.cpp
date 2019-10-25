@@ -8,6 +8,7 @@
 #include <string.h>
 #include <iostream>
 #include <iomanip>
+#include <stdlib.h>
 using namespace std;
 //#include <avr/pgmspace.h>
 
@@ -230,6 +231,8 @@ int main(){
   printf("Total time taken till current iteration: ");
   //totaltime = totaltime*1000000;
   cout<<fixed<<setprecision(3)<<totaltime<<"\n";
+  cout<<"PointAlice1: "<<pointAlice1<<"\n";
+  cout<<"PointBob1: "<<pointBob1<<"\n";
   
   if (memcmp(pointAlice1, pointBob1, 24) != 0) {
     printf("Shared secrets are not identical!\n");
