@@ -73,6 +73,7 @@ int main(){
   clock_t a,b; // for measuring time in seconds
   //unsigned long a = micros();
   a = clock();
+  double totaltime = 0;
   for (unsigned i = 0; i < 32; ++i) {
     uECC_make_key(public1, private1, curve);
     memcpy(publics + 64*i, public1, sizeof(public1));
@@ -83,6 +84,7 @@ int main(){
   unsigned long clockcycle;
   //clockcycle = microsecondsToClockCycles(b-a);
   double time1 = double(b-a)/double(CLOCKS_PER_SEC);
+  totaltime += time1;
   //Serial.print("Made key 1 in "); 
   //Serial.println(clockcycle);
   
@@ -95,6 +97,8 @@ int main(){
   //b = micros();
   b = clock();
   time1 = double(b-a)/double(CLOCKS_PER_SEC);
+  totaltime += time1;
+  
   printf("Made key 2 in "); 
   cout<<fixed<<setprecision(9)<<time1<<"\n";
   
@@ -170,6 +174,7 @@ int main(){
   //b = micros();
   //clockcycle = microsecondsToClockCycles(b-a);
   time1 = double(b-a)/double(CLOCKS_PER_SEC);
+  totaltime += time1;
   
   printf("Signing "); 
   cout<<fixed<<setprecision(9)<<time1<<"\n";
@@ -185,9 +190,13 @@ int main(){
   b = clock();
   //clockcycle = microsecondsToClockCycles(b-a);
   time1 = double(b-a)/double(CLOCKS_PER_SEC);
+  totaltime += time1;
+  
   printf("Verifying "); 
   cout<<fixed<<setprecision(9)<<time1<<"\n";
-  
+  totaltime = totaltime*1000000;
+  printf("Total time: ");
+  cout<<fixed<<setprecision(3)<<totaltime<<"\n";
   //Serial.print("Verifying "); Serial.println(clockcycle);
 //}
   return 0;

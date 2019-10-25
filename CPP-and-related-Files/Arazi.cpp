@@ -62,6 +62,7 @@ int main(){
 //void loop() {
   printf("Testing Arazi\n");
   uECC_set_rng(&RNG);
+  double totaltime = 0;
   while (true){
   const struct uECC_Curve_t * curve = uECC_secp192r1();
   uint8_t privateCA[24];
@@ -110,7 +111,6 @@ int main(){
   //clockcycle = microsecondsToClockCycles(b-a);
   double time1 = double(b-a)/double(CLOCKS_PER_SEC);
   
-	
   //c = micros();
   c = clock();
   /*sha256.reset();
@@ -124,7 +124,6 @@ int main(){
   //unsigned long clockcycle2;
   //clockcycle2 = microsecondsToClockCycles(d-c);
 	double time2 = double(d-c)/double(CLOCKS_PER_SEC);
-  
   
 //  memcpy(hash, publicAlice1, sizeof(hash));
 //  memcpy(hash2, publicBob1, sizeof(hash2));
@@ -157,13 +156,14 @@ int main(){
   time2 = time2+double(d-c)/double(CLOCKS_PER_SEC);
   //clockcycle2 = clockcycle2 + microsecondsToClockCycles(d-c);
 //  Serial.print("Made key 2 in "); Serial.println(clockcycle2);
-
+  
   a = clock();
   //a = micros();
   int r = uECC_shared_secret2(publicBob2, privateAlice2, pointAlice2, curve);
   //b = micros();
   b = clock();
   time1 = time1+double(b-a)/double(CLOCKS_PER_SEC);
+  
   //clockcycle = clockcycle + microsecondsToClockCycles(b-a);
   if (!r) {
     //Serial.print("shared_secret() failed (1)\n");
@@ -226,7 +226,11 @@ int main(){
   time2 = time2+double(d-c)/double(CLOCKS_PER_SEC);
   printf("Arazi in: "); 
   cout<<fixed<<setprecision(9)<<time2<<"\n";
-
+  totaltime += time1+time2;
+  printf("Total time taken till current iteration: ");
+  totaltime = totaltime*1000000;
+  cout<<fixed<<setprecision(3)<<totaltime<<"\n";
+  
   if (memcmp(pointAlice1, pointBob1, 24) != 0) {
     printf("Shared secrets are not identical!\n");
   } else {
