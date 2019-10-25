@@ -228,7 +228,7 @@ int main(){
   cout<<fixed<<setprecision(9)<<time2<<"\n";
   totaltime += time1+time2;
   printf("Total time taken till current iteration: ");
-  totaltime = totaltime*1000000;
+  //totaltime = totaltime*1000000;
   cout<<fixed<<setprecision(3)<<totaltime<<"\n";
   
   if (memcmp(pointAlice1, pointBob1, 24) != 0) {

@@ -194,7 +194,7 @@ int main(){
   
   printf("Verifying "); 
   cout<<fixed<<setprecision(9)<<time1<<"\n";
-  totaltime = totaltime*1000000;
+  //totaltime = totaltime*1000000;
   printf("Total time: ");
   cout<<fixed<<setprecision(3)<<totaltime<<"\n";
   //Serial.print("Verifying "); Serial.println(clockcycle);
