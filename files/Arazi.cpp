@@ -23,7 +23,9 @@ static int RNG(uint8_t *dest, unsigned size) {
     for (unsigned i = 0; i < 8; ++i) {
       //int init = analogRead(0);
 	  int init;
-          init = (int)(((100*i+i*i)%1024)+1024)%1024;//randomly generating numbers between 0 and 1023
+          init = i*100+i*i;
+	  //cin>>init;//between 0 and 1023
+	  init = ((init%1024)+1024)%1024;//randomly generating numbers between 0 and 1023
           //cout<<init<<"\n";
 	//while (analogRead(0) == init) {
        // ++count;
