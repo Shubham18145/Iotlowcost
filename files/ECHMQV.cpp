@@ -1,10 +1,15 @@
-#include <uECC_vli.h>
-#include <uECC.h>
-#include <types.h>
-
-#include <SHA256.h>
+#include "uECC.c"
+//#include <uECC_vli.h>
+//#include <uECC.h>
+#include "types.h"
 #include <string.h>
-#include <avr/pgmspace.h>
+#include <openssl/sha.h>
+#include <string.h>
+#include <iostream>
+#include <iomanip>
+#include <stdio.h>
+#include <stdlib.h>
+using namespace std;
 
 extern "C" {
 
