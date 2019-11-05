@@ -203,7 +203,7 @@ int main()
 	  if (!r) {  
 		//Serial.print("shared_secret() failed (1)\n");
 		printf("shared_secret() failed (1)\n");
-		return;
+		return 0;
 	  }
 
 	  EllipticAdd(key1, publicEph2, key1, curve);
@@ -212,8 +212,8 @@ int main()
 	  r = uECC_shared_secret2(key1, privateEph1, key1, curve);
 	  if (!r) {
 		//Serial.print("shared_secret() failed (1)\n");
-		print("shared_secret() failed (1)\n");
-		return;
+		printf("shared_secret() failed (1)\n");
+		return 0;
 	  }
 	  //b = micros();
 	  b = clock();
@@ -227,9 +227,9 @@ int main()
 	  c = clock();
 	  r = uECC_shared_secret2(public1, hashD, key2, curve);
 	  if (!r) {
-		Serial.print("shared_secret() failed (1)\n");
+		//Serial.print("shared_secret() failed (1)\n");
 		printf("shared_secret() failed (1)\n");
-		return;
+		return 0;
 	  }
 
 	  EllipticAdd(key2, publicEph1, key2, curve);
@@ -239,7 +239,7 @@ int main()
 	  if (!r) {
 		//Serial.print("shared_secret() failed (1)\n");
 		printf("shared_secret() failed (1)\n");
-		return;
+		return 0;
 	  }
 	  //d = micros();
 	  d = clock();
