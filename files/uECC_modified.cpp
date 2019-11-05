@@ -1163,6 +1163,7 @@ int uECC_make_private_key(uint8_t *private_key,
 	uECC_vli_nativeToBytes(private_key, BITS_TO_BYTES(curve->num_n_bits), _private);
     return 1;
 	}
+  return 0;
 }
 
 int uECC_make_key(uint8_t *public_key,
