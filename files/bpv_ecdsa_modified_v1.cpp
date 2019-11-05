@@ -49,7 +49,7 @@ int main(){
 //void setup() {
   //Serial.begin(115200);
   //Serial.print("Testing BPV ECDSA\n");
-  printf("Testing Arazi\n");
+  printf("Testing BPV ECDSA\n");
   uECC_set_rng(&RNG);
 
   const struct uECC_Curve_t * curve = uECC_secp256r1();
