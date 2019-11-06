@@ -1,6 +1,7 @@
 //#include "uECC_vli_modified.h"
 #include "uECC.c"
 #include "types.h"
+#include <openssl/sha.h>
 #include <stdio.h>
 #include <string.h>
 #include <iostream>
