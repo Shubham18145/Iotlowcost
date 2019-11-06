@@ -250,7 +250,16 @@ int main(){
 
   //cout<<"PointAlice1: "<<pointAlice1<<"\n";
   //cout<<"PointBob1: "<<pointBob1<<"\n";
-
+  cout<<"PointAlice1: \n";
+  for (int i=0;i<24;i++)
+  {
+      cout<<pointAlice1[i];
+  }
+  cout<<"---------------------------PointBob1: \n";
+  for (int i=0;i<24;i++)
+  {
+      cout<<pointBob1[i];
+  }
   if (memcmp(pointAlice1, pointBob1, 24) != 0) {
     printf("Shared secrets are not identical!\n");
   } else {
