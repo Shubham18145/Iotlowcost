@@ -15,8 +15,8 @@ using namespace std;
 extern "C" {
 
 static int RNG(uint8_t *dest, unsigned size) {
-  // Use the least-significant bits from the ADC for an unconnected pin (or connected to a source of 
-  // random noise). This can take a long time to generate random data if the result of analogRead(0) 
+  // Use the least-significant bits from the ADC for an unconnected pin (or connected to a source of
+  // random noise). This can take a long time to generate random data if the result of analogRead(0)
   // doesn't change very frequently.
   while (size) {
     uint8_t val = 0;
@@ -91,9 +91,15 @@ int main(){
   //unsigned long a,b,c,d;
 	clock_t a,b,c,d; // for measuring time in seconds
 
-  uECC_make_key(publicCA, privateCA, curve);
-  uECC_make_key(publicAlice1, privateAlice1, curve);
-  uECC_make_key(publicBob1, privateBob1, curve);
+  int status1 = uECC_make_key(publicCA, privateCA, curve);
+  int status2 = uECC_make_key(publicAlice1, privateAlice1, curve);
+  int status3 = uECC_make_key(publicBob1, privateBob1, curve);
+  if (status1==0)
+    printf("uECC_make_key(publicCA, privateCA, curve) failed\n");
+  if (status2==0)
+    printf("uECC_make_key(publicAlice1, privateAlice1, curve) failed\n");
+  if (status3==0)
+    printf("uECC_make_key(publicBob1, privateBob1, curve) failed\n");
 
   //a = micros();
   a = clock();
@@ -140,7 +146,9 @@ int main(){
 
   //a = micros();
   a = clock();
-  uECC_make_key(publicAlice2, privateAlice2, curve);
+  int status4 = uECC_make_key(publicAlice2, privateAlice2, curve);
+  if (status4==0)
+    printf("uECC_make_key(publicAlice2, privateAlice2, curve) failed\n");
   //b = micros();
   b = clock();
   time1 = time1+double(b-a)/double(CLOCKS_PER_SEC);
@@ -149,13 +157,15 @@ int main(){
 
   //c = micros();
   c = clock();
-  uECC_make_key(publicBob2, privateBob2, curve);
+  int status5 =  uECC_make_key(publicBob2, privateBob2, curve);
+  if (status5==0)
+    printf("uECC_make_key(publicBob2, privateBob2, curve) failed\n");
   //d = micros();
   d = clock();
   time2 = time2+double(d-c)/double(CLOCKS_PER_SEC);
   //clockcycle2 = clockcycle2 + microsecondsToClockCycles(d-c);
 //  Serial.print("Made key 2 in "); Serial.println(clockcycle2);
-  
+
   a = clock();
   //a = micros();
   int r = uECC_shared_secret2(publicBob2, privateAlice2, pointAlice2, curve);
