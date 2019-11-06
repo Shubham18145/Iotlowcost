@@ -126,14 +126,14 @@ int main()
 
 
 	  if (!uECC_verify(publicCA, hash, sizeof(hash), sig, curve)) {
-		 printf("uECC_verify() failed\n");
+		 printf("uECC_verify() failed for publicCA and hash\n");
 		 //Serial.print("uECC_verify() failed\n");
 	  }
 	  //Serial.print("CA signature is verified\n");
 	  //printf("CA signature is verified\n");
 
 	  if (!uECC_verify(publicCA, hash2, sizeof(hash2), sig2, curve)) {
-		 printf("uECC_verify() failed\n");
+		 printf("uECC_verify() failed for publicCA and hash2\n");
 	  }
 	  //Serial.print("CA signature is verified\n");
 	  printf("CA signature is verified\n");
@@ -253,14 +253,14 @@ int main()
 	  //totaltime = totaltime*1000000;
 
 	  cout<<fixed<<setprecision(3)<<totaltime<<"\n";
-    uint8_t var1;
-    uint16_t var2;
-    uint32_t var3;
-    uint64_t var4;
-	  cout<<sizeof(var1)<<"\t";
-	  cout<<sizeof(var2)<<"\t";
-	  cout<<sizeof(var3)<<"\t";
-	  cout<<sizeof(var4)<<"\t";
+    // uint8_t var1;
+    // uint16_t var2;
+    // uint32_t var3;
+    // uint64_t var4;
+	  // cout<<sizeof(var1)<<"\t";
+	  // cout<<sizeof(var2)<<"\t";
+	  // cout<<sizeof(var3)<<"\t";
+	  // cout<<sizeof(var4)<<"\t";
 	  //cout<<sizeof(uECC_word_t)<<"\t";
 
 

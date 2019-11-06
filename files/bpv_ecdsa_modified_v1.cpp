@@ -195,7 +195,7 @@ for (unsigned i=0;i<64;i++)
   a = clock();
   //memcpy(hash, private1, sizeof(hash));
   if (!uECC_verify(public1, hash, sizeof(hash), sig, curve)) {
-      //printf("uECC_verify() failed\n");
+      printf("uECC_verify() failed for public1 and hash\n");
   }
   //b = micros();
   b = clock();
@@ -208,16 +208,16 @@ for (unsigned i=0;i<64;i++)
   //totaltime = totaltime*1000000;
   printf("Total time: ");
   cout<<fixed<<setprecision(3)<<totaltime<<"\n";
-  uint8_t var1;
-  uint16_t var2;
-  uint32_t var3;
-  uint64_t var4;
-  uECC_word_t var5;
-  cout<<sizeof(var1)<<"\t";
-  cout<<sizeof(var2)<<"\t";
-  cout<<sizeof(var3)<<"\t";
-  cout<<sizeof(var4)<<"\t";
-  cout<<sizeof(var5)<<"\t";
+  // uint8_t var1;
+  // uint16_t var2;
+  // uint32_t var3;
+  // uint64_t var4;
+  // uECC_word_t var5;
+  // cout<<sizeof(var1)<<"\t";
+  // cout<<sizeof(var2)<<"\t";
+  // cout<<sizeof(var3)<<"\t";
+  // cout<<sizeof(var4)<<"\t";
+  // cout<<sizeof(var5)<<"\t";
 
   //Serial.print("Verifying "); Serial.println(clockcycle);
 //}
