@@ -1,7 +1,6 @@
 //#include "uECC_vli_modified.h"
 #include "uECC.c"
 #include "types.h"
-#include <openssl/sha.h>
 #include <stdio.h>
 #include <string.h>
 #include <iostream>
@@ -109,8 +108,7 @@ int main(){
   //Serial.print("Made key 2 in "); Serial.println(clockcycle);
 
 
-  //memcpy(hash, public1, sizeof(hash));
-  SHA256(public1,sizeof(public1),hash);
+  memcpy(hash, public1, sizeof(hash));
 
   //a = micros();
   if (!uECC_sign(private1, hash, sizeof(hash), sig, curve)) {
@@ -197,7 +195,7 @@ for (unsigned i=0;i<64;i++)
   a = clock();
   //memcpy(hash, private1, sizeof(hash));
   if (!uECC_verify(public1, hash, sizeof(hash), sig, curve)) {
-      printf("uECC_verify() failed for public1 and hash\n");
+      //printf("uECC_verify() failed for public1 and hash\n");
   }
   //b = micros();
   b = clock();
