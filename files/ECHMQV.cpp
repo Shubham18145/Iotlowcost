@@ -65,7 +65,7 @@ int main()
 	int loopcount = 0;
 	//void loop() {
 	while(true)
-	{		
+	{
 	  const struct uECC_Curve_t * curve = uECC_secp192r1();
 	  uint8_t privateCA[25];
 	  uint8_t private1[25];
@@ -110,7 +110,7 @@ int main()
 	  //sha256.finalize(hash2, sizeof(hash2));
 
 	  SHA256(public2,sizeof(public2),hash2);
-		
+
 	//  memcpy(hash, public1, sizeof(hash));
 	//  memcpy(hash2, public2, sizeof(hash2));
 
@@ -123,28 +123,28 @@ int main()
 		 printf("uECC_sign() failed\n");
 		 //Serial.print("uECC_sign() failed\n");
 	  }
-	  
+
 
 	  if (!uECC_verify(publicCA, hash, sizeof(hash), sig, curve)) {
 		 printf("uECC_verify() failed\n");
 		 //Serial.print("uECC_verify() failed\n");
-	  } 
+	  }
 	  //Serial.print("CA signature is verified\n");
 	  //printf("CA signature is verified\n");
 
 	  if (!uECC_verify(publicCA, hash2, sizeof(hash2), sig2, curve)) {
 		 printf("uECC_verify() failed\n");
-	  } 
+	  }
 	  //Serial.print("CA signature is verified\n");
 	  printf("CA signature is verified\n");
-	  
+
 	//  int r = uECC_shared_secret(public2, private1, key1, curve);
 	//  if (!r) {
 	//    Serial.print("shared_secret() failed (1)\n");
 	//    return;
 	//  }
 	//  //printHex(key1,24);
-	//  
+	//
 	//  r = uECC_shared_secret(public1, private2, key2, curve);
 	//  if (!r) {
 	//    Serial.print("shared_secret() failed (1)\n");
@@ -161,13 +161,13 @@ int main()
 	  //sha256.finalize(hashD, sizeof(hashD));
 
 	  SHA256(publicEph1,sizeof(publicEph1),hashD);
-	  
+
 	  //sha256.reset();
 	  //sha256.update(publicEph2, sizeof(publicEph2));
 	  //sha256.finalize(hashE, sizeof(hashE));
-	  
+
 	  SHA256(publicEph2,sizeof(publicEph2),hashE);
-	  
+
 	  //b = micros();
 	  b = clock();
 	  //clockcycle = microsecondsToClockCycles(b-a);
@@ -182,13 +182,13 @@ int main()
 	  //sha256.finalize(hashD, sizeof(hashD));
 
 	  SHA256(publicEph1,sizeof(publicEph1),hashD);
-		
+
 	  //sha256.reset();
 	  //sha256.update(publicEph2, sizeof(publicEph2));
 	  //sha256.finalize(hashE, sizeof(hashE));
-	 
+
 	  SHA256(publicEph2,sizeof(publicEph2),hashE);
-	 
+
 	  //d = micros();
 	  d = clock();
 	  //clockcycle2 = microsecondsToClockCycles(d-c);
@@ -200,7 +200,7 @@ int main()
 	  //a = micros();
 	  a = clock();
 	  int r = uECC_shared_secret2(public2, hashE, key1, curve);
-	  if (!r) {  
+	  if (!r) {
 		//Serial.print("shared_secret() failed (1)\n");
 		printf("shared_secret() failed (1)\n");
 		return 0;
@@ -220,7 +220,7 @@ int main()
 	  //clockcycle = clockcycle + microsecondsToClockCycles(b-a);
 	  time1 = time1+double(b-a)/double(CLOCKS_PER_SEC);
 	  //Serial.print("Ephemeral ECHMQV: "); Serial.println(clockcycle);
-	  //print("Ephemeral ECHMQV: "); 
+	  //print("Ephemeral ECHMQV: ");
 	  //Serial.println(clockcycle);
 
 	  //c = micros();
@@ -234,7 +234,7 @@ int main()
 
 	  EllipticAdd(key2, publicEph1, key2, curve);
 	  modularMultAdd(hashE, private2, privateEph2, privateEph2, curve);
-	  
+
 	  r = uECC_shared_secret2(key2, privateEph2, key2, curve);
 	  if (!r) {
 		//Serial.print("shared_secret() failed (1)\n");
@@ -253,13 +253,17 @@ int main()
 	  //totaltime = totaltime*1000000;
 
 	  cout<<fixed<<setprecision(3)<<totaltime<<"\n";
-	  cout<<sizeof(uint8_t)<<"\t";
-	  cout<<sizeof(uint16_t)<<"\t";
-	  cout<<sizeof(uint32_t)<<"\t";
-	  cout<<sizeof(uint64_t)<<"\t";
+    uint8_t var1;
+    uint16_t var2;
+    uint32_t var3;
+    uint64_t var4;
+	  cout<<sizeof(var1)<<"\t";
+	  cout<<sizeof(var2)<<"\t";
+	  cout<<sizeof(var3)<<"\t";
+	  cout<<sizeof(var4)<<"\t";
 	  //cout<<sizeof(uECC_word_t)<<"\t";
-	  
-	  
+
+
 
 	  if (memcmp(key1, key2, 24) != 0) {
 		//Serial.print("Shared secrets are not identical!\n");
@@ -272,5 +276,3 @@ int main()
 	}
 	return 0;
 }
-
-
