@@ -226,6 +226,17 @@ int main(){
   printf("Arazi in: ");
   cout<<fixed<<setprecision(9)<<time2<<"\n";
 
+  cout<<"PointAlice1: \n";
+  for (int i=0;i<24;i++)
+  {
+      cout<<hex<<setfill('0')<<setw(2)<<(unsigned int)(unsigned char)pointAlice1[i]<<"  ";
+  }
+  cout<<"\n---------------------------PointBob1: \n";
+  for (int i=0;i<24;i++)
+  {
+      cout<<hex<<setfill('0')<<setw(2)<<(unsigned int)(unsigned char)pointBob1[i]<<"  ";
+  }
+
   if (memcmp(pointAlice1, pointBob1, 24) != 0) {
     printf("Shared secrets are not identical!\n");
   } else {
