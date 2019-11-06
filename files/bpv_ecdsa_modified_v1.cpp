@@ -108,7 +108,8 @@ int main(){
   //Serial.print("Made key 2 in "); Serial.println(clockcycle);
 
 
-  memcpy(hash, public1, sizeof(hash));
+  //memcpy(hash, public1, sizeof(hash));
+  SHA256(public1,sizeof(public1),hash);
 
   //a = micros();
   if (!uECC_sign(private1, hash, sizeof(hash), sig, curve)) {
