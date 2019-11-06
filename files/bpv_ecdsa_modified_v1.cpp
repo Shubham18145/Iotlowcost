@@ -1,5 +1,5 @@
 //#include "uECC_vli_modified.h"
-#include "uECC_modified.cpp"
+#include "uECC.c"
 #include "types.h"
 #include <stdio.h>
 #include <string.h>

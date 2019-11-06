@@ -552,13 +552,13 @@ void modularAdd(const uint8_t *first,
                 const uint8_t *second,
                 uECC_word_t *sum,
                 uECC_Curve curve) {
-  
+
     //uECC_word_t *s1 = (uECC_word_t *)first;
     //uECC_word_t *s2 = (uECC_word_t *)second;
-    
+
     uECC_word_t s1[uECC_MAX_WORDS];
     uECC_word_t s2[uECC_MAX_WORDS];
-    
+
     uECC_vli_bytesToNative(s1, first, BITS_TO_BYTES(curve->num_n_bits));
     uECC_vli_bytesToNative(s2, second, BITS_TO_BYTES(curve->num_n_bits));
 
@@ -570,20 +570,20 @@ void modularAdd2(const uint8_t *first,
                 const uint8_t *second,
                 uint8_t *sum2,
                 uECC_Curve curve) {
-  
+
     //uECC_word_t *s1 = (uECC_word_t *)first;
     //uECC_word_t *s2 = (uECC_word_t *)second;
-    
+
     uECC_word_t s1[uECC_MAX_WORDS];
     uECC_word_t s2[uECC_MAX_WORDS];
 	uECC_word_t sum[uECC_MAX_WORDS];
 
-    
+
     uECC_vli_bytesToNative(s1, first, BITS_TO_BYTES(curve->num_n_bits));
     uECC_vli_bytesToNative(s2, second, BITS_TO_BYTES(curve->num_n_bits));
 
     uECC_vli_modAdd(sum, s1, s2, curve->n, curve->num_words);
-	
+
 	uECC_vli_nativeToBytes(sum2, BITS_TO_BYTES(curve->num_n_bits), sum);
 }
 
@@ -591,10 +591,10 @@ void modularAddULS(uECC_word_t *first,
                 const uint8_t *second,
                 uECC_word_t *sum,
                 uECC_Curve curve) {
-  
+
     //uECC_word_t *s1 = (uECC_word_t *)first;
     uECC_word_t s2[uECC_MAX_WORDS];
-    
+
     uECC_vli_bytesToNative(s2, second, BITS_TO_BYTES(curve->num_n_bits));
 
     uECC_vli_modAdd(sum, first, s2, curve->n, curve->num_words);
@@ -620,7 +620,7 @@ void modularSub(uECC_word_t *first,
                 uECC_word_t *second,
                 uECC_word_t *sum,
                 uECC_Curve curve) {
-  
+
     //uECC_word_t *s1 = (uECC_word_t *)first;
     //uECC_word_t *s2 = (uECC_word_t *)second;
     uECC_vli_modSub(sum, first, second, curve->n, BITS_TO_BYTES(curve->num_n_bits));
@@ -686,10 +686,10 @@ void modularMult(const uint8_t *first,
                 const uint8_t *second,
                 uECC_word_t *mult,
                 uECC_Curve curve) {
-  
+
     uECC_word_t s1[uECC_MAX_WORDS];
     uECC_word_t s2[uECC_MAX_WORDS];
-    
+
     uECC_vli_bytesToNative(s1, first, BITS_TO_BYTES(curve->num_n_bits));
     uECC_vli_bytesToNative(s2, second, BITS_TO_BYTES(curve->num_n_bits));
     uECC_vli_modMult(mult, s1, s2, curve->n, curve->num_words);
@@ -699,7 +699,7 @@ void modularMult2(const uint8_t *first,
                 const uint8_t *second,
                 uint8_t *mult2,
                 uECC_Curve curve) {
-  
+
     uECC_word_t s1[uECC_MAX_WORDS];
     uECC_word_t s2[uECC_MAX_WORDS];
     uECC_word_t mult[uECC_MAX_WORDS];
@@ -707,8 +707,8 @@ void modularMult2(const uint8_t *first,
     uECC_vli_bytesToNative(s1, first, BITS_TO_BYTES(curve->num_n_bits));
     uECC_vli_bytesToNative(s2, second, BITS_TO_BYTES(curve->num_n_bits));
     uECC_vli_modMult(mult, s1, s2, curve->n, curve->num_words);
-	
-	uECC_vli_nativeToBytes(mult2, BITS_TO_BYTES(curve->num_n_bits), mult);                                  
+
+	uECC_vli_nativeToBytes(mult2, BITS_TO_BYTES(curve->num_n_bits), mult);
 
 }
 
@@ -718,7 +718,7 @@ void modularMultAdd(const uint8_t *mult1,
 					const uint8_t *add,
                 	uint8_t *res,
                 	uECC_Curve curve) {
-	
+
 	uECC_word_t m1[uECC_MAX_WORDS];
     uECC_word_t m2[uECC_MAX_WORDS];
 	uECC_word_t a1[uECC_MAX_WORDS];
@@ -727,11 +727,11 @@ void modularMultAdd(const uint8_t *mult1,
     uECC_vli_bytesToNative(m1, mult1, BITS_TO_BYTES(curve->num_n_bits));
     uECC_vli_bytesToNative(m2, mult2, BITS_TO_BYTES(curve->num_n_bits));
 	uECC_vli_bytesToNative(a1, add, BITS_TO_BYTES(curve->num_n_bits));
-	
+
 	uECC_vli_modMult(resVLI, m1, m2, curve->n, curve->num_words);
 	uECC_vli_modAdd(resVLI, resVLI, a1, curve->n, curve->num_words);
-	
-	uECC_vli_nativeToBytes(res, BITS_TO_BYTES(curve->num_n_bits), resVLI);                                  
+
+	uECC_vli_nativeToBytes(res, BITS_TO_BYTES(curve->num_n_bits), resVLI);
 }
 
 
@@ -857,9 +857,9 @@ uECC_VLI_API void uECC_vli_modInv(uECC_word_t *result,
 void modularInv(const uint8_t *first,
                 uECC_word_t *res,
                 uECC_Curve curve) {
-  
+
     uECC_word_t s1[uECC_MAX_WORDS];
-    
+
     uECC_vli_bytesToNative(s1, first, BITS_TO_BYTES(curve->num_n_bits));
     uECC_vli_modInv(res, s1, curve->n, curve->num_words);
 }
@@ -867,13 +867,13 @@ void modularInv(const uint8_t *first,
 void modularInv2(const uint8_t *first,
                 uint8_t *res2,
                 uECC_Curve curve) {
-  
+
     uECC_word_t s1[uECC_MAX_WORDS];
     uECC_word_t res[uECC_MAX_WORDS];
-	
+
     uECC_vli_bytesToNative(s1, first, BITS_TO_BYTES(curve->num_n_bits));
     uECC_vli_modInv(res, s1, curve->n, curve->num_words);
-	
+
 	uECC_vli_nativeToBytes(res2, BITS_TO_BYTES(curve->num_n_bits), res);
 }
 
@@ -1162,6 +1162,7 @@ int uECC_make_private_key(uint8_t *private_key,
 	uECC_vli_nativeToBytes(private_key, BITS_TO_BYTES(curve->num_n_bits), _private);
     return 1;
 	}
+  return 0;
 }
 
 int uECC_make_key(uint8_t *public_key,
@@ -1420,7 +1421,7 @@ static void bits2int(uECC_word_t *native,
     bcopy((uint8_t *) native, bits, bits_size);
 #else
     uECC_vli_bytesToNative(native, bits, bits_size);
-#endif    
+#endif
     if (bits_size * 8 <= (unsigned)curve->num_n_bits) {
         return;
     }
@@ -1509,7 +1510,7 @@ static int uECC_sign_with_k(const uint8_t *private_key,
     bcopy((uint8_t *) signature + curve->num_bytes, (uint8_t *) s, curve->num_bytes);
 #else
     uECC_vli_nativeToBytes(signature + curve->num_bytes, curve->num_bytes, s);
-#endif    
+#endif
     return 1;
 }
 
@@ -1666,26 +1667,26 @@ void EllipticAdd(const uint8_t *first,
                  const uint8_t *second,
                  uint8_t *sum2,
                  uECC_Curve curve) {
-    
+
     uECC_word_t tx[uECC_MAX_WORDS];
     uECC_word_t ty[uECC_MAX_WORDS];
     uECC_word_t z[uECC_MAX_WORDS];
-    
+
     wordcount_t num_words = curve->num_words;
 
-    
+
     //uECC_word_t tx2[uECC_MAX_WORDS];
     //uECC_word_t ty2[uECC_MAX_WORDS];
 
-    
+
     //uECC_word_t *s1 = (uECC_word_t *)first;
     //uECC_word_t *s2 = (uECC_word_t *)second;
     //uECC_word_t *sum = (uECC_word_t *)sum2;
-    
+
     uECC_word_t s1[uECC_MAX_WORDS * 2];
     uECC_word_t s2[uECC_MAX_WORDS * 2];
     uECC_word_t sum[uECC_MAX_WORDS * 2];
-    
+
     uECC_vli_bytesToNative(s1, first, curve->num_bytes);
     uECC_vli_bytesToNative(s1 + num_words, first + curve->num_bytes, curve->num_bytes);
     uECC_vli_bytesToNative(s2, second, curve->num_bytes);
@@ -1695,7 +1696,7 @@ void EllipticAdd(const uint8_t *first,
 
 
 
-    
+
     uECC_vli_set(sum, s2, num_words);
     uECC_vli_set(sum + num_words, s2 + num_words, num_words);
     uECC_vli_set(tx, s1, num_words);
@@ -1715,11 +1716,11 @@ void EllipticAdd(const uint8_t *first,
     //uECC_vli_modMult_fast(z, z, ty2,curve);
 
     apply_z(sum, sum + num_words, z, curve);
-    
+
     uECC_vli_nativeToBytes(sum2, curve->num_bytes, sum);
     uECC_vli_nativeToBytes(sum2 + curve->num_bytes, curve->num_bytes, sum + curve->num_words);
 
-}            
+}
 
 
 
@@ -1744,7 +1745,7 @@ int uECC_verify(const uint8_t *public_key,
     uECC_word_t *_public = (uECC_word_t *)public_key;
 #else
     uECC_word_t _public[uECC_MAX_WORDS * 2];
-#endif    
+#endif
     uECC_word_t r[uECC_MAX_WORDS], s[uECC_MAX_WORDS];
     wordcount_t num_words = curve->num_words;
     wordcount_t num_n_words = BITS_TO_WORDS(curve->num_n_bits);
