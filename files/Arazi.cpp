@@ -23,9 +23,9 @@ static int RNG(uint8_t *dest, unsigned size) {
     for (unsigned i = 0; i < 8; ++i) {
       //int init = analogRead(0);
 	  int init;
-          init = i*100+i*i;
+          init = (1000*i+i*i)%1024;
 	  //cin>>init;//between 0 and 1023
-	  init = ((init%1024)+1024)%1024;//randomly generating numbers between 0 and 1023
+	  //init = ((init%1024)+1024)%1024;//randomly generating numbers between 0 and 1023
           //cout<<init<<"\n";
 	//while (analogRead(0) == init) {
        // ++count;
@@ -253,12 +253,12 @@ int main(){
   cout<<"PointAlice1: \n";
   for (int i=0;i<24;i++)
   {
-      cout<<hex<<setfill('0')<<setw(4)<<(unsigned int)(unsigned char)pointAlice1[i]<<"  ";
+      cout<<hex<<setfill('0')<<setw(2)<<(unsigned int)(unsigned char)pointAlice1[i]<<"  ";
   }
   cout<<"\n---------------------------PointBob1: \n";
   for (int i=0;i<24;i++)
   {
-      cout<<hex<<setfill('0')<<setw(4)<<(unsigned int)(unsigned char)pointBob1[i]<<"  ";
+      cout<<hex<<setfill('0')<<setw(2)<<(unsigned int)(unsigned char)pointBob1[i]<<"  ";
   }
   if (memcmp(pointAlice1, pointBob1, 24) != 0) {
     printf("Shared secrets are not identical!\n");
