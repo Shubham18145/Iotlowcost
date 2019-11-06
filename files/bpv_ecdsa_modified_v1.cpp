@@ -208,6 +208,12 @@ for (unsigned i=0;i<64;i++)
   //totaltime = totaltime*1000000;
   printf("Total time: ");
   cout<<fixed<<setprecision(3)<<totaltime<<"\n";
+  cout<<sizeof(uint8_t)<<"\t";
+  cout<<sizeof(uint16_t)<<"\t";
+  cout<<sizeof(uint32_t)<<"\t";
+  cout<<sizeof(uint64_t)<<"\t";
+  cout<<sizeof(uECC_word_t)<<"\t";
+	  
   //Serial.print("Verifying "); Serial.println(clockcycle);
 //}
 

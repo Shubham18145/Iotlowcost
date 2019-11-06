@@ -253,6 +253,13 @@ int main()
 	  //totaltime = totaltime*1000000;
 
 	  cout<<fixed<<setprecision(3)<<totaltime<<"\n";
+	  cout<<sizeof(uint8_t)<<"\t";
+	  cout<<sizeof(uint16_t)<<"\t";
+	  cout<<sizeof(uint32_t)<<"\t";
+	  cout<<sizeof(uint64_t)<<"\t";
+	  //cout<<sizeof(uECC_word_t)<<"\t";
+	  
+	  
 
 	  if (memcmp(key1, key2, 24) != 0) {
 		//Serial.print("Shared secrets are not identical!\n");
