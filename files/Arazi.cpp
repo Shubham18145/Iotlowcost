@@ -1,6 +1,11 @@
 #include "uECC_vli.h"
+#include "uECC.h"
 #include "uECC.c"
 #include "types.h"
+//#include "asm_arm.inc"
+//#include "asm_avr.inc"
+//#include "curve-specific.inc"
+
 #include <stdio.h>
 //#include <SHA256.h>
 //#include "sha256.cpp"
@@ -9,6 +14,8 @@
 #include <iostream>
 #include <iomanip>
 #include <stdlib.h>
+#include <stdint.h>
+#include <time.h>
 using namespace std;
 //#include <avr/pgmspace.h>
 
@@ -18,26 +25,60 @@ static int RNG(uint8_t *dest, unsigned size) {
   // Use the least-significant bits from the ADC for an unconnected pin (or connected to a source of
   // random noise). This can take a long time to generate random data if the result of analogRead(0)
   // doesn't change very frequently.
+  srand(time(0));
   while (size) {
     uint8_t val = 0;
+    int init;
+    //init = rand()%1024;
+
+	  //init = (unsigned char)(rand()%256);
+    //init = 5;
+    //srand(time(0)+size+1);
     for (unsigned i = 0; i < 8; ++i) {
       //int init = analogRead(0);
-	  int init;
-	init = i*100+i*i;
+      //srand(time(0)+(size*(i+1))+1);
+
+      //init = 2*i*i*i;
+
+      //init = rand()%2;
 	  //cin>>init;//between 0 and 1023
-	  init = ((init%1024)+1024)%1024;
+	  //init = ((init%1024)+1024)%1024;
+    //if (init%2==0)
+      //init = (init+1)%1024;
+    //cout<<init<<"\n";
+      init = rand()%1024;
+      //int count = 11;
+      //init = 10+i+1;
       int count = 0;
       //while (analogRead(0) == init) {
        // ++count;
       //}
+      //if (size==1)
+      //printf("in loop before val: %d \n",(unsigned int)(unsigned char)*dest);
 
       if (count == 0) {
-         val = (val << 1) | (init & 0x01);
+         val = (unsigned char)(val << 1) | (init & 0x01);
       } else {
-         val = (val << 1) | (count & 0x01);
+         val = (unsigned char)(val << 1) | (count & 0x01);
       }
+      if (size==1)
+      {
+        //cout<<"size: "<<size<<"i: "<<i<<endl;
+        //cout<<"val: "<<(unsigned int)(unsigned char)val<<endl;
+      }
+      //if (size==1)
+      //printf("in loop after val: %d \n",(unsigned int)(unsigned char)*dest);
+
+      //if (size==1)
+      //printf("in loop val: %02x \n",(unsigned int)(unsigned char)*dest);
+
     }
+    //cout<<"val in integer: "<<(unsigned int)(unsigned char)val<<"\n";
+    //sprintf(dest,"%d",val);
+    //cout<<"init: "<<(unsigned int)(unsigned char)init<<"\n";
+    //cout<<"init: "<<init<<"\n";
     *dest = val;
+    //printf("val: %d \n",(unsigned int)(unsigned char)*dest);
     ++dest;
     --size;
   }
@@ -57,13 +98,17 @@ static int RNG(uint8_t *dest, unsigned size) {
 
 int main(){
 
+  //srand(time(0));
 //void loop() {
   printf("Testing Arazi\n");
   uECC_set_rng(&RNG);
+  cout<<"g_rng_function: "<<uECC_get_rng()<<"\n";
   double totaltime = 0;
   int loopcount = 0;
-  while (true){
+  while (loopcount<4){
   const struct uECC_Curve_t * curve = uECC_secp192r1();
+  //cout<<"Num of words(curve): "<<curve->p<<"\n";
+
   uint8_t privateCA[24];
   uint8_t publicCA[48];
 
@@ -242,29 +287,35 @@ int main(){
 
   totaltime += time1+time2;
   loopcount +=1 ;
-  printf("Total time taken till iteration: %d\n",loopcount);
+  printf("Total time taken till iteration %d :",loopcount);
 
-  //totaltime = totaltime*1000000;
+  totaltime = totaltime;
 
-  //cout<<fixed<<setprecision(3)<<totaltime<<"\n";
-
+  //cout<<fixed<<setprecision(3)<<totaltime<<" seconds\n";
+  printf(" %.3f seconds\n",totaltime);
   //cout<<"PointAlice1: "<<pointAlice1<<"\n";
   //cout<<"PointBob1: "<<pointBob1<<"\n";
-  cout<<"PointAlice1: \n";
+  printf("PointAlice1: \n");
   for (int i=0;i<24;i++)
   {
-      cout<<hex<<setfill('0')<<setw(2)<<(unsigned int)(unsigned char)pointAlice1[i]<<"  ";
+    printf("%02x  ",(unsigned int)(unsigned char)pointAlice1[i]);
+      //cout<<hex<<setfill('0')<<setw(2)<<(unsigned int)(unsigned char)pointAlice1[i]<<"  ";
   }
-  cout<<"\n---------------------------PointBob1: \n";
+  printf("\n---------------------------PointBob1: \n");
   for (int i=0;i<24;i++)
   {
-      cout<<hex<<setfill('0')<<setw(2)<<(unsigned int)(unsigned char)pointBob1[i]<<"  ";
+    printf("%02x  ",(unsigned int)(unsigned char)pointBob1[i]);
+
+      //cout<<hex<<setfill('0')<<setw(2)<<(unsigned int)(unsigned char)pointBob1[i]<<"  ";
   }
   if (memcmp(pointAlice1, pointBob1, 24) != 0) {
     printf("Shared secrets are not identical!\n");
+    return 0;
   } else {
     printf("Shared secrets are identical\n");
+
   }
+  //usleep(1000);
  }
 	return 0;
 //}
