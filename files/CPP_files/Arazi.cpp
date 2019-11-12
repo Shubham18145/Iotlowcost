@@ -25,7 +25,7 @@ static int RNG(uint8_t *dest, unsigned size) {
   // Use the least-significant bits from the ADC for an unconnected pin (or connected to a source of
   // random noise). This can take a long time to generate random data if the result of analogRead(0)
   // doesn't change very frequently.
-  srand(time(0));
+  //srand(time(0));
   while (size) {
     uint8_t val = 0;
     int init;
@@ -36,11 +36,7 @@ static int RNG(uint8_t *dest, unsigned size) {
     //srand(time(0)+size+1);
     for (unsigned i = 0; i < 8; ++i) {
       //int init = analogRead(0);
-      //srand(time(0)+(size*(i+1))+1);
 
-      //init = 2*i*i*i;
-
-      //init = rand()%2;
 	  //cin>>init;//between 0 and 1023
 	  //init = ((init%1024)+1024)%1024;
     //if (init%2==0)
@@ -61,10 +57,10 @@ static int RNG(uint8_t *dest, unsigned size) {
       } else {
          val = (unsigned char)(val << 1) | (count & 0x01);
       }
-      if (size==1)
+      if (size==1 && i==7)
       {
-        //cout<<"size: "<<size<<"i: "<<i<<endl;
-        //cout<<"val: "<<(unsigned int)(unsigned char)val<<endl;
+        cout<<"size: "<<size<<"i: "<<i<<endl;
+        cout<<"val: "<<(unsigned int)(unsigned char)val<<endl;
       }
       //if (size==1)
       //printf("in loop after val: %d \n",(unsigned int)(unsigned char)*dest);
@@ -98,7 +94,7 @@ static int RNG(uint8_t *dest, unsigned size) {
 
 int main(){
 
-  //srand(time(0));
+  srand(time(0));
 //void loop() {
   printf("Testing Arazi\n");
   uECC_set_rng(&RNG);
@@ -133,12 +129,19 @@ int main(){
   uint8_t pointAlice2[48];
   uint8_t pointBob2[48];
 
+  uint8_t sig[48] = {0};
+  uint8_t hash3[24] = {0};
+  uint8_t sig2[48] = {0};
+  uint8_t hash4[24] = {0};
+  uint8_t sig3[48] = {0};
+  uint8_t hash5[24] = {0};
   //unsigned long a,b,c,d;
 	clock_t a,b,c,d; // for measuring time in seconds
 
   int status1 = uECC_make_key(publicCA, privateCA, curve);
   int status2 = uECC_make_key(publicAlice1, privateAlice1, curve);
   int status3 = uECC_make_key(publicBob1, privateBob1, curve);
+
   if (status1==0)
     printf("uECC_make_key(publicCA, privateCA, curve) failed\n");
   if (status2==0)
@@ -146,6 +149,97 @@ int main(){
   if (status3==0)
     printf("uECC_make_key(publicBob1, privateBob1, curve) failed\n");
 
+    if (!uECC_sign(privateAlice1, hash3, sizeof(hash3), sig, curve)) {
+     printf("\nuECC_sign() Alice failed\n");
+     //Serial.print("uECC_sign() failed\n");
+    }
+    else
+    {
+      printf("\nSign Alice successful. \n");
+    }
+
+
+    if (!uECC_verify(publicAlice1, hash3, sizeof(hash3), sig, curve)) {
+     printf("uECC_verify() Alice failed\n");
+     //Serial.print("uECC_verify() failed\n");
+    }
+    else
+    {
+      printf("\nVerify Alice successful. \n");
+    }
+
+    if (!uECC_sign(privateBob1, hash4, sizeof(hash4), sig2, curve)) {
+     printf("\nuECC_sign() Bob failed\n");
+     //Serial.print("uECC_sign() failed\n");
+    }
+    else
+    {
+      printf("\nSign Bob successful. \n");
+    }
+
+
+    if (!uECC_verify(publicBob1, hash4, sizeof(hash4), sig2, curve)) {
+     printf("uECC_verify() Bob failed\n");
+     //Serial.print("uECC_verify() failed\n");
+    }
+    else
+    {
+      printf("\nVerify Bob successful. \n");
+    }
+
+    if (!uECC_sign(privateCA, hash5, sizeof(hash5), sig3, curve)) {
+     printf("\nuECC_sign() CA failed\n");
+     //Serial.print("uECC_sign() failed\n");
+    }
+    else
+    {
+      printf("\nSign CA successful. \n");
+    }
+
+
+    if (!uECC_verify(publicCA, hash5, sizeof(hash5), sig3, curve)) {
+     printf("uECC_verify() CA failed\n");
+     //Serial.print("uECC_verify() failed\n");
+    }
+    else
+    {
+      printf("\nVerify CA successful. \n");
+    }
+
+
+
+    cout<<"publicca\n";
+
+    for (int i=0;i<48;i++)
+    {
+      cout<<hex<<setfill('0')<<setw(2)<<(unsigned int)(unsigned char)publicCA[i]<<" ";
+    }
+    cout<<"\nprivateca\n";
+    for (int i=0;i<24;i++)
+    {
+      cout<<hex<<setfill('0')<<setw(2)<<(unsigned int)(unsigned char)privateCA[i]<<" ";
+    }
+    cout<<"\npublicalice1\n";
+    for (int i=0;i<48;i++)
+    {
+      cout<<hex<<setfill('0')<<setw(2)<<(unsigned int)(unsigned char)publicAlice1[i]<<" ";
+    }
+    cout<<"\nprivatealice1\n";
+    for (int i=0;i<24;i++)
+    {
+      cout<<hex<<setfill('0')<<setw(2)<<(unsigned int)(unsigned char)privateAlice1[i]<<" ";
+    }
+    cout<<"\npublicbob1\n";
+    for (int i=0;i<48;i++)
+    {
+      cout<<hex<<setfill('0')<<setw(2)<<(unsigned int)(unsigned char)publicBob1[i]<<" ";
+    }
+    cout<<"\nprivatebob1\n";
+    for (int i=0;i<24;i++)
+    {
+      cout<<hex<<setfill('0')<<setw(2)<<(unsigned int)(unsigned char)privateBob1[i]<<" ";
+    }
+    cout<<"\n";
   //a = micros();
   a = clock();
   //unsigned char *SHA256(const unsigned char *d, size_t n, unsigned char *md)
@@ -154,8 +248,30 @@ int main(){
   sha256.update(publicAlice1, sizeof(publicAlice1));
   sha256.finalize(hash, sizeof(hash));
   */
-  SHA256(publicAlice1,sizeof(publicAlice1),hash);
+
+  //unsigned char* flag1= SHA256(publicAlice1,sizeof(publicAlice1),hash);
   //b = micros();
+  SHA256_CTX ctx1;
+  int flag1 = SHA256_Init(&ctx1);
+  int flag2 = SHA256_Update(&ctx1,publicAlice1,sizeof(publicAlice1));
+  int flag3 = SHA256_Final(hash,&ctx1);
+  if (flag1==0)
+  {
+    printf("SHA256_Init of Alice failed\n");
+  }
+  if (flag2==0)
+  {
+    printf("SHA256_Update of Alice failed\n");
+  }
+  if (flag3==0)
+  {
+    printf("SHA256_Final of Alice failed\n");
+  }
+  cout<<"\nSHA256 of publicAlice1 status: "<<endl;
+  for (int i=0;i<24;i++)
+  {
+    cout<<hex<<setfill('0')<<setw(2)<<(unsigned int)(unsigned char)hash[i]<<" ";
+  }
   b = clock();
   //unsigned long clockcycle;
   //clockcycle = microsecondsToClockCycles(b-a);
@@ -167,8 +283,31 @@ int main(){
   sha256.update(publicBob1, sizeof(publicBob1));
   sha256.finalize(hash2, sizeof(hash2));
   */
-  SHA256(publicBob1,sizeof(publicBob1),hash2);
+  //unsigned char* flag2 = SHA256(publicBob1,sizeof(publicBob1),hash2);
+  SHA256_CTX ctx2;
+  int flag4 = SHA256_Init(&ctx2);
+  int flag5 = SHA256_Update(&ctx2,publicBob1,sizeof(publicBob1));
+  int flag6 = SHA256_Final(hash2,&ctx2);
 
+  if (flag4==0)
+  {
+    printf("SHA256_Init of Bob failed\n");
+  }
+  if (flag5==0)
+  {
+    printf("SHA256_Update of Bob failed\n");
+  }
+  if (flag6==0)
+  {
+    printf("SHA256_Final of Bob failed\n");
+  }
+
+  cout<<"\nSHA256 of publicBob1 status: "<<endl;
+  for (int i=0;i<24;i++)
+  {
+    cout<<hex<<setfill('0')<<setw(2)<<(unsigned int)(unsigned char)hash2[i]<<" ";
+  }
+  cout<<endl;
   //d = micros();
   d = clock();
   //unsigned long clockcycle2;
@@ -182,6 +321,34 @@ int main(){
   modularMultAdd(hash2, privateBob1, privateCA, privateBob1, curve);
 
 
+  cout<<"\nprivateca\n";
+  for (int i=0;i<24;i++)
+  {
+    cout<<hex<<setfill('0')<<setw(2)<<(unsigned int)(unsigned char)privateCA[i]<<" ";
+  }
+  cout<<"\nprivatealice1\n";
+  for (int i=0;i<24;i++)
+  {
+    cout<<hex<<setfill('0')<<setw(2)<<(unsigned int)(unsigned char)privateAlice1[i]<<" ";
+  }
+  cout<<"\nprivatebob1\n";
+  for (int i=0;i<24;i++)
+  {
+    cout<<hex<<setfill('0')<<setw(2)<<(unsigned int)(unsigned char)privateBob1[i]<<" ";
+  }
+  cout<<"\n";
+  // cout<<"\nhash of publicAlice1\n";
+  // for (int i=0;i<24;i++)
+  // {
+  //   cout<<hex<<setfill('0')<<setw(2)<<(unsigned int)(unsigned char)hash[i]<<" ";
+  // }
+  // cout<<"\n";
+  // cout<<"\nhash of publicBob1\n";
+  // for (int i=0;i<24;i++)
+  // {
+  //   cout<<hex<<setfill('0')<<setw(2)<<(unsigned int)(unsigned char)hash2[i]<<" ";
+  // }
+  // cout<<"\n";
  // modularAdd2(privateAlice1, privateCA, privateAlice1, curve);
   //modularAdd2(privateBob1, privateCA, privateBob1, curve);
 
