@@ -52,6 +52,7 @@ const  uint8_t BPVTable[] = {0x34, 0xBE, 0x7B, 0xEE, 0xED, 0x11, 0x39, 0xB9, 0x7
 //SHA256 sha256;
 int main()
 {
+  srand(time(0));
 	uECC_set_rng(&RNG);
 	int loop = 1;
 	while (loop!=0)
@@ -97,7 +98,7 @@ int main()
 	  uECC_make_key(publicCA, privateCA, curve);
 	  uECC_make_key(publicAlice1, privateAlice1, curve);
 	  uECC_make_key(publicBob1, privateBob1, curve);
-    printf("Number of entries in table: %u",sizeof(BPVTable)/sizeof(BPVTable[0]));
+    printf("Number of entries in table: %lu",sizeof(BPVTable)/sizeof(BPVTable[0]));
 
     if (!uECC_sign(privateAlice1, hash5, sizeof(hash5), sig3, curve)) {
      printf("\nuECC_sign() Alice failed\n");
@@ -208,7 +209,6 @@ int main()
 		// {
 		//   publicAlice2[i-24] = pgm_read_word_near(BPVTable + 72*randNumber + i);
 		// }
-    srand(time(0));
     a = clock();
 	  randNumber = rand()%160;
 	  for (unsigned i = 0; i < 24; i++)
