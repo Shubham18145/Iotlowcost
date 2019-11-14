@@ -7,22 +7,26 @@
 #include <CTR.h>
 #include <string.h>
 #include <avr/pgmspace.h>
+#include <openssl/conf.h>
+#include <openssl/evp.h>
+#include <openssl/err.h>
 
 extern "C" {
 
 static int RNG(uint8_t *dest, unsigned size) {
-  // Use the least-significant bits from the ADC for an unconnected pin (or connected to a source of 
-  // random noise). This can take a long time to generate random data if the result of analogRead(0) 
+  // Use the least-significant bits from the ADC for an unconnected pin (or connected to a source of
+  // random noise). This can take a long time to generate random data if the result of analogRead(0)
   // doesn't change very frequently.
   while (size) {
     uint8_t val = 0;
     for (unsigned i = 0; i < 8; ++i) {
-      int init = analogRead(0);
+      //int init = analogRead(0);
+      int init = rand()%1024;
       int count = 0;
-      while (analogRead(0) == init) {
-        ++count;
-      }
-      
+      // while (analogRead(0) == init) {
+      //   ++count;
+      // }
+
       if (count == 0) {
          val = (val << 1) | (init & 0x01);
       } else {
@@ -39,20 +43,111 @@ static int RNG(uint8_t *dest, unsigned size) {
 
 }  // extern "C"
 
+int encrypt_aes128(unsigned char *plaintext, int plaintext_len, unsigned char *key,
+  unsigned char *iv, unsigned char *ciphertext)
+{
+  EVP_CIPHER_CTX *ctx;
 
-CTR<AES128> ctraes128;
-SHA256 sha256;
+  int len;
 
-void setup() {
-  Serial.begin(115200);
-  Serial.print("Testing ECIES\n");
-  uECC_set_rng(&RNG);
+  int ciphertext_len;
+
+  /* Create and initialise the context */
+  if(!(ctx = EVP_CIPHER_CTX_new())) handleErrors();
+
+  /* Initialise the encryption operation. IMPORTANT - ensure you use a key
+   * and IV size appropriate for your cipher
+   * In this example we are using 256 bit AES (i.e. a 256 bit key). The
+   * IV size for *most* modes is the same as the block size. For AES this
+   * is 128 bits */
+  if(1 != EVP_EncryptInit_ex(ctx, EVP_aes_128_ctr(), NULL, key, iv))
+    handleErrors();
+
+  /* Provide the message to be encrypted, and obtain the encrypted output.
+   * EVP_EncryptUpdate can be called multiple times if necessary
+   */
+  if(1 != EVP_EncryptUpdate(ctx, ciphertext, &len, plaintext, plaintext_len))
+    handleErrors();
+  ciphertext_len = len;
+
+  /* Finalise the encryption. Further ciphertext bytes may be written at
+   * this stage.
+   */
+  if(1 != EVP_EncryptFinal_ex(ctx, ciphertext + len, &len)) handleErrors();
+  ciphertext_len += len;
+
+  /* Clean up */
+  EVP_CIPHER_CTX_free(ctx);
+
+  return ciphertext_len;
+}
+
+int decrypt_aes128(unsigned char *ciphertext, int ciphertext_len, unsigned char *key,
+  unsigned char *iv, unsigned char *plaintext)
+{
+  EVP_CIPHER_CTX *ctx;
+
+  int len;
+
+  int plaintext_len;
+
+  /* Create and initialise the context */
+  if(!(ctx = EVP_CIPHER_CTX_new())) handleErrors();
+
+  /* Initialise the decryption operation. IMPORTANT - ensure you use a key
+   * and IV size appropriate for your cipher
+   * In this example we are using 256 bit AES (i.e. a 256 bit key). The
+   * IV size for *most* modes is the same as the block size. For AES this
+   * is 128 bits */
+  if(1 != EVP_DecryptInit_ex(ctx, EVP_aes_128_ctr(), NULL, key, iv))
+    handleErrors();
+
+  /* Provide the message to be decrypted, and obtain the plaintext output.
+   * EVP_DecryptUpdate can be called multiple times if necessary
+   */
+  if(1 != EVP_DecryptUpdate(ctx, plaintext, &len, ciphertext, ciphertext_len))
+    handleErrors();
+  plaintext_len = len;
+
+  /* Finalise the decryption. Further plaintext bytes may be written at
+   * this stage.
+   */
+  if(1 != EVP_DecryptFinal_ex(ctx, plaintext + len, &len)) handleErrors();
+  plaintext_len += len;
+
+  /* Clean up */
+  EVP_CIPHER_CTX_free(ctx);
+
+  return plaintext_len;
 }
 
 
-void loop() {
+CTR<AES128> ctraes128;
+int generate_sha256(uint8_t *value, unsigned int n, uint8_t *hash)
+{
+  SHA256_CTX ctx1;
+  int flag1 = SHA256_Init(&ctx1);
+  int flag2 = SHA256_Update(&ctx1,value,n);
+  int flag3 = SHA256_Final(hash,&ctx1);
+  if (flag1==1 && flag2==1 && flag3==1)
+    return 1;
+  else
+    return 0;
+
+}
+//SHA256 sha256;
+
+// void setup() {
+//   Serial.begin(115200);
+//   Serial.print("Testing ECIES\n");
+//   uECC_set_rng(&RNG);
+// }
+
+int main()
+{
+//void loop() {
   const struct uECC_Curve_t * curve = uECC_secp192r1();
-  
+
   uint8_t privateAlice1[24];
 
   uint8_t privateBob1[24];
@@ -87,18 +182,27 @@ void loop() {
 
   uECC_make_key(publicBob1, privateBob1, curve);
 
-  a = micros();
+  //a = micros();
+  a = clock();
   uECC_make_key(publicAlice1, privateAlice1, curve);
   int r = uECC_shared_secret2(publicBob1, privateAlice1, pointAlice1, curve);
   if (!r) {
-    Serial.print("shared_secret() failed (1)\n");
-    return;
+    //Serial.print("shared_secret() failed (1)\n");
+    printf("shared_secret() failed (1)\n");
+    return 0;
   }
 
-  sha256.reset();
-  sha256.update(pointAlice1, sizeof(pointAlice1));
-  sha256.finalize(hash, sizeof(hash));
-  
+  // sha256.reset();
+  // sha256.update(pointAlice1, sizeof(pointAlice1));
+  // sha256.finalize(hash, sizeof(hash));
+
+  int flag = generate_sha256(pointAlice1,sizeof(pointAlice1),hash);
+
+  if (flag==0)
+  {
+    printf("SHA256 generation of pointAlice1 failed.\n");
+    return 0;
+  }
   memcpy(keyAliceEnc, hash, sizeof(keyAliceEnc));
   memcpy(keyAliceMac, hash + 16, sizeof(keyAliceMac));
 
@@ -147,8 +251,6 @@ void loop() {
   clockcycle2 = microsecondsToClockCycles(d-c);
   Serial.print("ECIES (Bob) in: "); Serial.println(clockcycle2);
 
-
-
-
-
+//}
+  return 0;
 }

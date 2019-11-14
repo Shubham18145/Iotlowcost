@@ -11,8 +11,8 @@
 extern "C" {
 
 static int RNG(uint8_t *dest, unsigned size) {
-  // Use the least-significant bits from the ADC for an unconnected pin (or connected to a source of 
-  // random noise). This can take a long time to generate random data if the result of analogRead(0) 
+  // Use the least-significant bits from the ADC for an unconnected pin (or connected to a source of
+  // random noise). This can take a long time to generate random data if the result of analogRead(0)
   // doesn't change very frequently.
   while (size) {
     uint8_t val = 0;
@@ -22,7 +22,7 @@ static int RNG(uint8_t *dest, unsigned size) {
       while (analogRead(0) == init) {
         ++count;
       }
-      
+
       if (count == 0) {
          val = (val << 1) | (init & 0x01);
       } else {
@@ -41,7 +41,21 @@ static int RNG(uint8_t *dest, unsigned size) {
 
 
 CTR<AES128> ctraes128;
-SHA256 sha256;
+//SHA256 sha256;
+
+
+int generate_sha256(uint8_t *value, uint8_t *hash)
+{
+  SHA256_CTX ctx1;
+  int flag1 = SHA256_Init(&ctx1);
+  int flag2 = SHA256_Update(&ctx1,value,sizeof(value));
+  int flag3 = SHA256_Final(hash,&ctx1);
+  if (flag1==1 && flag2==1 && flag3==1)
+    return 1;
+  else
+    return 0;
+
+}
 
 void setup() {
   Serial.begin(115200);
@@ -52,7 +66,7 @@ void setup() {
 
 void loop() {
   const struct uECC_Curve_t * curve = uECC_secp192r1();
-  
+
   uint8_t privateAlice1[24];
   uint8_t privateAlice2[24];
 
@@ -94,7 +108,7 @@ void loop() {
 
   a = micros();
   uECC_make_private_key(privateAlice2,curve);
-  
+
   int r = uECC_shared_secret2(publicBob1, privateAlice2, pointAlice1, curve);
   if (!r) {
     Serial.print("shared_secret() failed (1)\n");
@@ -140,7 +154,7 @@ void loop() {
     Serial.print("shared_secret() failed (1)\n");
     return;
   }
-  
+
   sha256.reset();
   sha256.update(pointBob1, sizeof(pointBob1));
   sha256.finalize(hash2, sizeof(hash2));
@@ -155,7 +169,7 @@ void loop() {
   sha256.resetHMAC(keyBobSign, sizeof(keyBobSign));
   sha256.update(messageBob, sizeof(messageBob));
   sha256.finalizeHMAC(keyBobSign, sizeof(keyBobSign), tagBob, sizeof(tagBob));
-  
+
 
   if (memcmp(tagBob, tag, 16) != 0) {
     Serial.print("Message IS NOT Authenticated!\n");
