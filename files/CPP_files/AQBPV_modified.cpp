@@ -5,6 +5,7 @@
 //#include <SHA256.h>
 //#include <openssl/sha.h>
 #include <string.h>
+#include "pgmspace.h"
 //#include <avr/pgmspace.h>
 #include "SHA256.cpp"
 #include <stdio.h>
@@ -54,7 +55,7 @@ const  uint8_t BPVTable[] = {0x34, 0xBE, 0x7B, 0xEE, 0xED, 0x11, 0x39, 0xB9, 0x7
 SHA256 sha256;
 int main()
 {
-  //srand(time(0));
+  srand(time(0));
 	uECC_set_rng(&RNG);
 	int loop = 1;
 	while (loop!=0)
@@ -215,14 +216,17 @@ int main()
 		// }
     a = clock();
 	  randNumber = rand()%160;
+
 	  for (unsigned i = 0; i < 24; i++)
 	  {
-		tempPriv[i] = *(BPVTable + 72*randNumber + i);
+		//tempPriv[i] = *(BPVTable + 72*randNumber + i);
+    tempPriv[i] = pgm_read_word_near(BPVTable + 72*randNumber + i);
+
 	  }
 
 	  for (unsigned i = 24; i < 72; i++)
 	  {
-		tempPub[i-24] = *(BPVTable + 72*randNumber + i);
+		tempPub[i-24] = pgm_read_word_near(BPVTable + 72*randNumber + i);
 	  }
 
     if (!uECC_sign(tempPriv, hash5, sizeof(hash5), sig3, curve)) {
@@ -250,12 +254,12 @@ int main()
 		randNumber = rand()%160;
 		for (unsigned i = 0; i < 24; i++)
 		{
-		  privateAlice2[i] = *(BPVTable + 72*randNumber + i);
+		  privateAlice2[i] = pgm_read_word_near(BPVTable + 72*randNumber + i);
 		}
 
 		for (unsigned i = 24; i < 72; i++)
 		{
-		  publicAlice2[i-24] = *(BPVTable + 72*randNumber + i);
+		  publicAlice2[i-24] = pgm_read_word_near(BPVTable + 72*randNumber + i);
 		}
 		EllipticAdd(publicAlice2,tempPub,publicAlice2,curve);
 		modularAdd2(privateAlice2, tempPriv, privateAlice2, curve);
@@ -306,12 +310,12 @@ int main()
   randNumber = rand()%160;
   for (unsigned i = 0; i < 24; i++)
   {
-  tempPriv[i] = *(BPVTable + 72*randNumber + i);
+  tempPriv[i] = pgm_read_word_near(BPVTable + 72*randNumber + i);
   }
 
   for (unsigned i = 24; i < 72; i++)
   {
-  tempPub[i-24] = *(BPVTable + 72*randNumber + i);
+  tempPub[i-24] = pgm_read_word_near(BPVTable + 72*randNumber + i);
   }
 
   if (!uECC_sign(tempPriv, hash5, sizeof(hash5), sig3, curve)) {
@@ -338,12 +342,12 @@ int main()
   randNumber = rand()%160;
   for (unsigned i = 0; i < 24; i++)
   {
-    privateBob2[i] = *(BPVTable + 72*randNumber + i);
+    privateBob2[i] = pgm_read_word_near(BPVTable + 72*randNumber + i);
   }
 
   for (unsigned i = 24; i < 72; i++)
   {
-    publicBob2[i-24] = *(BPVTable + 72*randNumber + i);
+    publicBob2[i-24] = pgm_read_word_near(BPVTable + 72*randNumber + i);
   }
   EllipticAdd(publicBob2,tempPub,publicBob2,curve);
   modularAdd2(privateBob2, tempPriv, privateBob2, curve);
