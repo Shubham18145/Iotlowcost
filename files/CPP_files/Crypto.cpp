@@ -19,7 +19,8 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-
+#ifndef CRYPTO_H_
+#define CRYPTO_H_
 #include "Crypto.h"
 
 /**
@@ -112,3 +113,4 @@ uint8_t crypto_crc8(uint8_t tag, const void *data, unsigned size)
     }
     return crc;
 }
+#endif

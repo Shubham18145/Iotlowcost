@@ -2,11 +2,8 @@
 #include "uECC.c"
 #include "types.h"
 
-//#include <SHA256.h>
-//#include <openssl/sha.h>
 #include <string.h>
 #include "pgmspace.h"
-//#include <avr/pgmspace.h>
 #include "SHA256.cpp"
 #include <stdio.h>
 #include <iomanip>
@@ -24,14 +21,9 @@ static int RNG(uint8_t *dest, unsigned size) {
   while (size) {
     uint8_t val = 0;
     for (unsigned i = 0; i < 8; ++i) {
-      //int init = analogRead(0);
       //int init = rand()%1024;
-      int init = 100+i;
-      //int init = 5+i;
+      int init = (100+i)*size;
       int count = 0;
-      // while (analogRead(0) == init) {
-      //   ++count;
-      // }
 
       if (count == 0) {
          val = (val << 1) | (init & 0x01);
@@ -56,9 +48,11 @@ SHA256 sha256;
 int main()
 {
   srand(time(0));
-	uECC_set_rng(&RNG);
-	int loop = 1;
-	while (loop!=0)
+  printf("Testing Arazi-BPV\n");
+  uECC_set_rng(&RNG);
+  double totaltime = 0, progtime = 0;
+  int loopcount = 0;
+	while (true)
 	{
 	  const struct uECC_Curve_t * curve = uECC_secp192r1();
 	  uint8_t privateCA[24];
@@ -94,51 +88,70 @@ int main()
     uint8_t hash6[24] = {0};
     uint8_t sig4[48] = {0};
 
-	  unsigned long a,b,c,d;
+    memset(hash,0,sizeof(hash));
+    memset(hash2,0,sizeof(hash2));
+    memset(hash3,0,sizeof(hash3));
+    memset(hash4,0,sizeof(hash4));
+    memset(hash5,0,sizeof(hash5));
+    memset(hash6,0,sizeof(hash6));
+    memset(sig,0,sizeof(sig));
+    memset(sig2,0,sizeof(sig2));
+    memset(sig3,0,sizeof(sig3));
+    memset(sig4,0,sizeof(sig4));
+    memset(privateBob1,0,sizeof(privateBob1));
+    memset(publicBob1,0,sizeof(publicBob1));
+
+
+
+	  clock_t a,b,c,d;
 
 	  long randNumber;
 
 	  uECC_make_key(publicCA, privateCA, curve);
 	  uECC_make_key(publicAlice1, privateAlice1, curve);
 	  uECC_make_key(publicBob1, privateBob1, curve);
-    printf("Number of entries in table: %lu",sizeof(BPVTable)/sizeof(BPVTable[0]));
+    //printf("Number of entries in table: %lu",sizeof(BPVTable)/sizeof(BPVTable[0]));
 
     if (!uECC_sign(privateAlice1, hash5, sizeof(hash5), sig3, curve)) {
      printf("\nuECC_sign() Alice failed\n");
      //Serial.print("uECC_sign() failed\n");
     }
-    else
+    /*else
     {
       printf("\nSign Alice successful. \n");
-    }
+    }*/
 
     if (!uECC_verify(publicAlice1, hash5, sizeof(hash5), sig3, curve)) {
      printf("uECC_verify() Alice failed\n");
+     //printf("verify status: %d\n",uECC_verify(publicAlice1, hash5, sizeof(hash5), sig3, curve));
      //Serial.print("uECC_verify() failed\n");
     }
-    else
+
+    /*else
     {
       printf("\nVerify Alice successful. \n");
-    }
+    }*/
 
     if (!uECC_sign(privateBob1, hash6, sizeof(hash6), sig4, curve)) {
      printf("\nuECC_sign() Bob failed\n");
      //Serial.print("uECC_sign() failed\n");
     }
-    else
+    /*else
     {
       printf("\nSign Bob successful. \n");
-    }
+    }*/
 
 
     if (!uECC_verify(publicBob1, hash6, sizeof(hash6), sig4, curve)) {
      printf("uECC_verify() Bob failed\n");
+     //printf("verify status: %d\n",uECC_verify(publicBob1, hash6, sizeof(hash6), sig4, curve));
+
      //Serial.print("uECC_verify() failed\n");
     }
-    else
+    /*else
     {
       printf("\nVerify Bob successful. \n");
-    }
+    }*/
 
 	  // a = micros();
     a = clock();
@@ -216,51 +229,70 @@ int main()
 		// }
     a = clock();
 	  randNumber = rand()%160;
+    //printf("Random number 1: %ld\n",randNumber);
 
-	  for (unsigned i = 0; i < 24; i++)
+
+
+
+    printf("tempPriv: \n");
+
+    for (unsigned i = 0; i < 24; i++)
 	  {
-		//tempPriv[i] = *(BPVTable + 72*randNumber + i);
-    tempPriv[i] = pgm_read_word_near(BPVTable + 72*randNumber + i);
+		    //tempPriv[i] = (unsigned char)(pgm_read_word_near(BPVTable + 72*randNumber + i));
+        //tempPriv[i] = (pgm_read_word_near(BPVTable + 72*randNumber + i));
+        tempPriv[i] = (*(BPVTable + 72*randNumber + i));
+
+        printf("%02x ",(unsigned int)(unsigned char)tempPriv[i]);
+
+        //tempPriv[i] = pgm_read_word_near(BPVTable + 72*randNumber + i);
 
 	  }
 
+    printf("\ntempPub: \n");
 	  for (unsigned i = 24; i < 72; i++)
 	  {
-		tempPub[i-24] = pgm_read_word_near(BPVTable + 72*randNumber + i);
-	  }
-
+      //tempPub[i-24] = (unsigned char)(pgm_read_word_near(BPVTable + 72*randNumber + i));
+      //tempPub[i-24] = (pgm_read_word_near(BPVTable + 72*randNumber + i));
+      tempPub[i-24] = BPVTable[(72*randNumber + i)%11520];
+      //(*(BPVTable + (72*randNumber + i)%11520));
+      printf("%02x ",(unsigned int)(unsigned char)tempPub[i-24]);
+    }
+    printf("\n");
     if (!uECC_sign(tempPriv, hash5, sizeof(hash5), sig3, curve)) {
      printf("\nuECC_sign() temp Alice failed\n");
      //Serial.print("uECC_sign() failed\n");
     }
-    else
+    /*else
     {
       printf("\nSign temp Alice successful. \n");
-    }
+    }*/
 
     if (!uECC_verify(tempPub, hash5, sizeof(hash5), sig3, curve)) {
      printf("uECC_verify() temp Alice failed\n");
      //Serial.print("uECC_verify() failed\n");
     }
-    else
+    /*else
     {
       printf("\nVerify temp Alice successful. \n");
-    }
+    }*/
 
 
 
 	  for (unsigned j = 0; j < 7; j++)
 	  {
 		randNumber = rand()%160;
+    //printf("Random number 2: %ld\n",randNumber);
 		for (unsigned i = 0; i < 24; i++)
 		{
-		  privateAlice2[i] = pgm_read_word_near(BPVTable + 72*randNumber + i);
-		}
+      //privateAlice2[i] = (pgm_read_word_near(BPVTable + 72*randNumber + i));
+      privateAlice2[i] = (*(BPVTable + 72*randNumber + i));
+    }
 
 		for (unsigned i = 24; i < 72; i++)
 		{
-		  publicAlice2[i-24] = pgm_read_word_near(BPVTable + 72*randNumber + i);
-		}
+      //publicAlice2[i-24] = (pgm_read_word_near(BPVTable + 72*randNumber + i));
+      publicAlice2[i-24] = (*(BPVTable + 72*randNumber + i));
+    }
 		EllipticAdd(publicAlice2,tempPub,publicAlice2,curve);
 		modularAdd2(privateAlice2, tempPriv, privateAlice2, curve);
 
@@ -310,31 +342,35 @@ int main()
   randNumber = rand()%160;
   for (unsigned i = 0; i < 24; i++)
   {
-  tempPriv[i] = pgm_read_word_near(BPVTable + 72*randNumber + i);
+    //tempPriv[i] = pgm_read_word_near(BPVTable + 72*randNumber + i);
+    tempPriv[i] = *(BPVTable + 72*randNumber + i);
+
   }
 
   for (unsigned i = 24; i < 72; i++)
   {
-  tempPub[i-24] = pgm_read_word_near(BPVTable + 72*randNumber + i);
+    //tempPub[i-24] = pgm_read_word_near(BPVTable + 72*randNumber + i);
+    tempPub[i-24] = *(BPVTable + 72*randNumber + i);
+
   }
 
   if (!uECC_sign(tempPriv, hash5, sizeof(hash5), sig3, curve)) {
    printf("\nuECC_sign() temp Bob failed\n");
    //Serial.print("uECC_sign() failed\n");
   }
-  else
+  /*else
   {
     printf("\nSign temp Bob successful. \n");
-  }
+  }*/
 
   if (!uECC_verify(tempPub, hash5, sizeof(hash5), sig3, curve)) {
    printf("uECC_verify() temp Bob failed\n");
    //Serial.print("uECC_verify() failed\n");
   }
-  else
+/*  else
   {
     printf("\nVerify temp Bob successful. \n");
-  }
+  }*/
 
 
   for (unsigned j = 0; j < 7; j++)
@@ -342,12 +378,16 @@ int main()
   randNumber = rand()%160;
   for (unsigned i = 0; i < 24; i++)
   {
-    privateBob2[i] = pgm_read_word_near(BPVTable + 72*randNumber + i);
+    //privateBob2[i] = pgm_read_word_near(BPVTable + 72*randNumber + i);
+    privateBob2[i] = *(BPVTable + 72*randNumber + i);
+
   }
 
   for (unsigned i = 24; i < 72; i++)
   {
-    publicBob2[i-24] = pgm_read_word_near(BPVTable + 72*randNumber + i);
+    //publicBob2[i-24] = pgm_read_word_near(BPVTable + 72*randNumber + i);
+    publicBob2[i-24] = *(BPVTable + 72*randNumber + i);
+
   }
   EllipticAdd(publicBob2,tempPub,publicBob2,curve);
   modularAdd2(privateBob2, tempPriv, privateBob2, curve);
@@ -358,39 +398,39 @@ int main()
    printf("\nuECC_sign() Alice failed\n");
    //Serial.print("uECC_sign() failed\n");
   }
-  else
+  /*else
   {
     printf("\nSign Alice successful. \n");
-  }
+  }*/
 
 
   if (!uECC_verify(publicAlice2, hash3, sizeof(hash3), sig, curve)) {
    printf("uECC_verify() Alice failed\n");
    //Serial.print("uECC_verify() failed\n");
   }
-  else
+  /*else
   {
     printf("\nVerify Alice successful. \n");
-  }
+  }*/
 
   if (!uECC_sign(privateBob2, hash4, sizeof(hash4), sig2, curve)) {
    printf("\nuECC_sign() Bob failed\n");
    //Serial.print("uECC_sign() failed\n");
   }
-  else
+  /*else
   {
     printf("\nSign Bob successful. \n");
-  }
+  }*/
 
 
   if (!uECC_verify(publicBob2, hash4, sizeof(hash4), sig2, curve)) {
    printf("uECC_verify() Bob failed\n");
    //Serial.print("uECC_verify() failed\n");
   }
-  else
+  /*else
   {
     printf("\nVerify Bob successful. \n");
-  }
+  }*/
 
   d = clock();
   time2 = time2+double(d-c)/double(CLOCKS_PER_SEC);
@@ -419,9 +459,9 @@ int main()
     d = clock();
     //clockcycle2 = clockcycle2 + microsecondsToClockCycles(d-c);
     time2 = time2+double(d-c)/double(CLOCKS_PER_SEC);
+
     if (!r) {
-		//Serial.print("shared_secret() failed (1)\n");
-    printf("shared_secret() failed (1)\n");
+		printf("shared_secret() failed (1)\n");
 		return 0;
 	  }
 
@@ -470,8 +510,20 @@ int main()
     d = clock();
     //clockcycle2 = clockcycle2 + microsecondsToClockCycles(d-c);
     time2 = time2+double(d-c)/double(CLOCKS_PER_SEC);
-    //Serial.print("Arazi in: "); Serial.println(clockcycle2);
+    totaltime += time1+time2;
+    loopcount +=1 ;
+    printf("Total time taken till iteration %d :",loopcount);
+    long integraltime = 0;
+    if (totaltime > 1.0)
+    {
+      integraltime = long(totaltime);
+      progtime += integraltime;
+      totaltime = totaltime-integraltime;
+    }
 
+    printf("%.4f  seconds\n",progtime+totaltime);
+    //Serial.print("Arazi in: "); Serial.println(clockcycle2);
+/*
     printf("PointAlice1: \n");
     for (int i=0;i<24;i++)
     {
@@ -485,7 +537,7 @@ int main()
 
         //cout<<hex<<setfill('0')<<setw(2)<<(unsigned int)(unsigned char)pointBob1[i]<<"  ";
     }
-
+*/
 	  if (memcmp(pointAlice1, pointBob1, 24) != 0) {
 		//Serial.print("Shared secrets are not identical!\n");
     printf("Shared secrets are not identical!\n");
@@ -494,7 +546,7 @@ int main()
     printf("Shared secrets are identical\n");
 
     }
-    loop--;
+    //loop--;
 	}
 	return 0;
 }
