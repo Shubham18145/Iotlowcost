@@ -54,7 +54,7 @@ int main()
 {
 	printf("Testing Ephemeral ECHMQV\n");
 	uECC_set_rng(&RNG);
-	double totaltime = 0;
+	double totaltime = 0, progtime = 0;
 	int loopcount = 0;
 	//void loop() {
 	while(true)
@@ -126,7 +126,7 @@ int main()
 		 printf("uECC_verify() failed for publicCA and hash2\n");
 	  }
 	  //Serial.print("CA signature is verified\n");
-	  printf("CA signature is verified\n");
+	  //printf("CA signature is verified\n");
 
 	//  int r = uECC_shared_secret(public2, private1, key1, curve);
 	//  if (!r) {
@@ -233,19 +233,14 @@ int main()
 	  printf("Total time taken till iteration: %d\n",loopcount);
 
 	  //totaltime = totaltime*1000000;
-
-	  cout<<fixed<<setprecision(3)<<totaltime<<"\n";
-    // uint8_t var1;
-    // uint16_t var2;
-    // uint32_t var3;
-    // uint64_t var4;
-	  // cout<<sizeof(var1)<<"\t";
-	  // cout<<sizeof(var2)<<"\t";
-	  // cout<<sizeof(var3)<<"\t";
-	  // cout<<sizeof(var4)<<"\t";
-	  //cout<<sizeof(uECC_word_t)<<"\t";
-
-
+          long integraltime = 0;
+          if (totaltime>1.0)
+          {
+            integraltime = long(totaltime);
+	    progtime += integraltime;
+	    totaltime = totaltime-integraltime;
+           }
+	  printf("%.4f seconds\n",progtime+totaltime);
 
 	  if (memcmp(key1, key2, 24) != 0) {
 		//Serial.print("Shared secrets are not identical!\n");
@@ -254,7 +249,8 @@ int main()
 		//Serial.print("Shared secrets are identical\n");
 		printf("Shared secrets are identical\n");
 	  }
-
+	  if (progtime+totaltime>100)
+	     break;
 	}
 	return 0;
 }
