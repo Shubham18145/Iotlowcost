@@ -1,26 +1,19 @@
-#include "uECC_vli.h"
-#include "uECC.h"
-#include "uECC.c"
-#include "types.h"
+#include "header/uECC_vli.h"
+#include "header/uECC.c"
+#include "header/types.h"
 #include <stdio.h>
-#include "SHA256.cpp"
-//#include <SHA256.h>
-//#include "sha256.cpp"
-#include "pgmspace.h"
-//#include <openssl/sha.h>
+#include "header/SHA256.cpp"
 #include <string.h>
 #include <iostream>
 #include <iomanip>
 #include <stdlib.h>
 #include <stdint.h>
 #include <time.h>
-#include <cmath>
+#include "header/AES128.cpp"
+#include "header/CTR.cpp"
+#include "header/pgmspace.h"
+using namespace std;
 
-//#include "AES.h"
-#include "AES128.cpp"
-//#include "CTR.h"
-//#include "CTR.h"
-#include "CTR.cpp"
 
 extern "C" {
 
