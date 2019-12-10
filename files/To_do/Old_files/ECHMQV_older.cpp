@@ -119,8 +119,25 @@ int main()
     {
 		    printf("uECC_verify() failed for publicCA and hash2\n");
 	  }
+	  //Serial.print("CA signature is verified\n");
+	  //printf("CA signature is verified\n");
 
-    a = clock();
+	//  int r = uECC_shared_secret(public2, private1, key1, curve);
+	//  if (!r) {
+	//    Serial.print("shared_secret() failed (1)\n");
+	//    return;
+	//  }
+	//  //printHex(key1,24);
+	//
+	//  r = uECC_shared_secret(public1, private2, key2, curve);
+	//  if (!r) {
+	//    Serial.print("shared_secret() failed (1)\n");
+	//    return;
+	//  }
+
+
+	  //a = micros();
+	  a = clock();
 	  uECC_make_key(publicEph1, privateEph1, curve);
 
 	  sha256.reset();
@@ -131,9 +148,12 @@ int main()
 	  sha256.update(publicEph2, sizeof(publicEph2));
 	  sha256.finalize(hashE, sizeof(hashE));
 
+	  //b = micros();
 	  b = clock();
+	  //clockcycle = microsecondsToClockCycles(b-a);
 	  double time1 = double(b-a)/double(CLOCKS_PER_SEC);
 
+	  //c = micros();
 	  c = clock();
 	  uECC_make_key(publicEph2, privateEph2, curve);
 
@@ -145,78 +165,84 @@ int main()
 	  sha256.update(publicEph2, sizeof(publicEph2));
 	  sha256.finalize(hashE, sizeof(hashE));
 
+	  //d = micros();
 	  d = clock();
+	  //clockcycle2 = microsecondsToClockCycles(d-c);
 	  double time2 = double(d-c)/double(CLOCKS_PER_SEC);
 
-	  //  memcpy(hashD, publicEph1, sizeof(hashD));
-	  //  memcpy(hashE, publicEph2, sizeof(hashE));
+	//  memcpy(hashD, publicEph1, sizeof(hashD));
+	//  memcpy(hashE, publicEph2, sizeof(hashE));
 
+	  //a = micros();
 	  a = clock();
 	  int r = uECC_shared_secret2(public2, hashE, key1, curve);
-	  if (!r)
-    {
-  		printf("shared_secret() failed (1)\n");
-  		return 0;
+	  if (!r) {
+		//Serial.print("shared_secret() failed (1)\n");
+		printf("shared_secret() failed (1)\n");
+		return 0;
 	  }
 
 	  EllipticAdd(key1, publicEph2, key1, curve);
 
 	  modularMultAdd(hashD, private1, privateEph1, privateEph1, curve);
 	  r = uECC_shared_secret2(key1, privateEph1, key1, curve);
-	  if (!r)
-    {
-  		printf("shared_secret() failed (1)\n");
-  		return 0;
+	  if (!r) {
+		//Serial.print("shared_secret() failed (1)\n");
+		printf("shared_secret() failed (1)\n");
+		return 0;
 	  }
-
-    b = clock();
+	  //b = micros();
+	  b = clock();
+	  //clockcycle = clockcycle + microsecondsToClockCycles(b-a);
 	  time1 = time1+double(b-a)/double(CLOCKS_PER_SEC);
+	  //Serial.print("Ephemeral ECHMQV: "); Serial.println(clockcycle);
+	  //print("Ephemeral ECHMQV: ");
+	  //Serial.println(clockcycle);
 
-    c = clock();
-
-    r = uECC_shared_secret2(public1, hashD, key2, curve);
-	  if (!r)
-    {
-  		printf("shared_secret() failed (1)\n");
-  		return 0;
+	  //c = micros();
+	  c = clock();
+	  r = uECC_shared_secret2(public1, hashD, key2, curve);
+	  if (!r) {
+		//Serial.print("shared_secret() failed (1)\n");
+		printf("shared_secret() failed (1)\n");
+		return 0;
 	  }
 
 	  EllipticAdd(key2, publicEph1, key2, curve);
 	  modularMultAdd(hashE, private2, privateEph2, privateEph2, curve);
 
 	  r = uECC_shared_secret2(key2, privateEph2, key2, curve);
-	  if (!r)
-    {
-  		printf("shared_secret() failed (1)\n");
-  		return 0;
+	  if (!r) {
+		//Serial.print("shared_secret() failed (1)\n");
+		printf("shared_secret() failed (1)\n");
+		return 0;
 	  }
-
-    d = clock();
+	  //d = micros();
+	  d = clock();
+	  //clockcycle2 = clockcycle2 + microsecondsToClockCycles(d-c);
 	  time2 = time2+double(d-c)/double(CLOCKS_PER_SEC);
-
-    totaltime += time1+time2;
+	  //Serial.print("Ephemeral ECHMQV: "); Serial.println(clockcycle2);
+	  totaltime += time1+time2;
 	  loopcount +=1 ;
 	  printf("Total time taken till iteration: %d\n",loopcount);
 
-    long integraltime = 0;
-    if (totaltime>1.0)
-    {
-      integraltime = long(totaltime);
-      progtime += integraltime;
-      totaltime = totaltime-integraltime;
-    }
+	  //totaltime = totaltime*1000000;
+          long integraltime = 0;
+          if (totaltime>1.0)
+          {
+            integraltime = long(totaltime);
+	    progtime += integraltime;
+	    totaltime = totaltime-integraltime;
+           }
+	  printf("%.4f seconds\n",progtime+totaltime);
 
-    printf("%.4f seconds\n",progtime+totaltime);
-
-	  if (memcmp(key1, key2, 24) != 0)
-    {
-		    printf("Shared secrets are not identical!\n");
+	  if (memcmp(key1, key2, 24) != 0) {
+		//Serial.print("Shared secrets are not identical!\n");
+		printf("Shared secrets are not identical!\n");
+	  } else {
+		//Serial.print("Shared secrets are identical\n");
+		printf("Shared secrets are identical\n");
 	  }
-    else
-    {
-		    printf("Shared secrets are identical\n");
-	  }
-    
 	  if (progtime+totaltime>100)
 	     break;
 	}
