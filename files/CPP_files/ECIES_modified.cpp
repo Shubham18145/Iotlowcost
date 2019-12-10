@@ -156,7 +156,6 @@ int main()
     totaltime += time1+time2;
     loopcount +=1 ;
     printf("Total time taken till iteration %d :",loopcount);
-
     long integraltime = 0;
     if (totaltime > 1.0)
     {
@@ -164,6 +163,7 @@ int main()
       progtime += integraltime;
       totaltime = totaltime-integraltime;
     }
+
     printf("%.4f  seconds\n",progtime+totaltime);
     if (progtime+totaltime>100)
       break;

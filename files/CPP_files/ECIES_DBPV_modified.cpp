@@ -232,6 +232,7 @@ int main()
 
     totaltime += time1+time2;
     loopcount +=1 ;
+
     printf("Total time taken till iteration %d :",loopcount);
     long integraltime = 0;
     if (totaltime > 1.0)

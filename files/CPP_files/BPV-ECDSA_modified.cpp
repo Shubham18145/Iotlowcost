@@ -4,8 +4,6 @@
 #include "header/uECC_vli.h"
 #include "header/uECC.c"
 #include "header/types.h"
-#include "uECC.c"
-#include "types.h"
 #include <stdio.h>
 #include <string.h>
 #include <iostream>
@@ -203,6 +201,6 @@ for (unsigned i=0;i<64;i++)
   cout<<fixed<<setprecision(9)<<time1<<"\n";
   printf("Total time: ");
   cout<<fixed<<setprecision(3)<<totaltime<<"\n";
-  
+
   return 0;
 }

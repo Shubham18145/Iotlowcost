@@ -270,17 +270,16 @@ int main()
 
     totaltime += time1+time2;
 	  loopcount +=1 ;
-	  printf("Total time taken till iteration: %d\n",loopcount);
-
+    printf("Total time taken till iteration %d :",loopcount);
     long integraltime = 0;
-    if (totaltime>1.0)
+    if (totaltime > 1.0)
     {
       integraltime = long(totaltime);
       progtime += integraltime;
       totaltime = totaltime-integraltime;
     }
 
-    printf("%.4f seconds\n",progtime+totaltime);
+    printf("%.4f  seconds\n",progtime+totaltime);
 
     if (memcmp(pointAlice1, pointBob1, 24) != 0)
     {
