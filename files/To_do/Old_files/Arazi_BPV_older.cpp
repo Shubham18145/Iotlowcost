@@ -13,7 +13,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <time.h>
-#include "header/pgmspace.h"
+#include "pgmspace.h"
 using namespace std;
 
 extern "C"
@@ -228,135 +228,217 @@ int main()
 
 	  b = clock();
     time1 = time1+double(b-a)/double(CLOCKS_PER_SEC);
+	  //clockcycle = clockcycle + microsecondsToClockCycles(b-a);
+	//  Serial.print("Made key 1 in ");
+	//cout<<clockcycle<<"\n";
+
+	//   c = micros();
+	//   randNumber = random(160);
+	//   for (unsigned i = 0; i < 24; i++)
+	//   {
+	// 	tempPriv[i] = pgm_read_word_near(BPVTable + 72*randNumber + i);
+	//   }
+  //
+	//   for (unsigned i = 24; i < 72; i++)
+	//   {
+	// 	tempPub[i-24] = pgm_read_word_near(BPVTable + 72*randNumber + i);
+	//   }
+  //
+	//   for (unsigned j = 0; j < 7; j++)
+	//   {
+	// 	randNumber = random(160);
+	// 	for (unsigned i = 0; i < 24; i++)
+	// 	{
+	// 	  privateBob2[i] = pgm_read_word_near(BPVTable + 72*randNumber + i);
+	// 	}
+  //
+	// 	for (unsigned i = 24; i < 72; i++)
+	// 	{
+	// 	  publicBob2[i-24] = pgm_read_word_near(BPVTable + 72*randNumber + i);
+	// 	}
+	// 	EllipticAdd(publicBob2,tempPub,publicBob2,curve);
+	// 	modularAdd2(privateBob2, tempPriv, privateBob2, curve);
+  //
+	//   }
+  //
+	//   d = micros();
+	//   clockcycle2 = clockcycle2 + microsecondsToClockCycles(d-c);
+	// //  Serial.print("Made key 2 in ");
+	// cout<<clockcycle2<<"\n";
 
 
-    c = clock();
-    randNumber = rand()%160;
-    for (unsigned i = 0; i < 24; i++)
-    {
-      tempPriv[i] = pgm_read_word_near(BPVTable + 72*randNumber + i);
-    }
+  c = clock();
+  randNumber = rand()%160;
+  for (unsigned i = 0; i < 24; i++)
+  {
+    tempPriv[i] = pgm_read_word_near(BPVTable + 72*randNumber + i);
+    //tempPriv[i] = *(BPVTable + 72*randNumber + i);
 
-    for (unsigned i = 24; i < 72; i++)
-    {
-      tempPub[i-24] = pgm_read_word_near(BPVTable + 72*randNumber + i);
-    }
+  }
 
-    if (!uECC_sign(tempPriv, hash5, sizeof(hash5), sig3, curve))
-    {
-      printf("\nuECC_sign() temp Bob failed\n");
-    }
+  for (unsigned i = 24; i < 72; i++)
+  {
+    tempPub[i-24] = pgm_read_word_near(BPVTable + 72*randNumber + i);
+    //tempPub[i-24] = *(BPVTable + 72*randNumber + i);
 
-    if (!uECC_verify(tempPub, hash5, sizeof(hash5), sig3, curve))
-    {
-      printf("uECC_verify() temp Bob failed\n");
-    }
+  }
 
-    for (unsigned j = 0; j < 7; j++)
-    {
-      randNumber = rand()%160;
+  if (!uECC_sign(tempPriv, hash5, sizeof(hash5), sig3, curve)) {
+   printf("\nuECC_sign() temp Bob failed\n");
+   //Serial.print("uECC_sign() failed\n");
+  }
+  /*else
+  {
+    printf("\nSign temp Bob successful. \n");
+  }*/
 
-      for (unsigned i = 0; i < 24; i++)
-      {
-        privateBob2[i] = pgm_read_word_near(BPVTable + 72*randNumber + i);
-      }
-
-      for (unsigned i = 24; i < 72; i++)
-      {
-        publicBob2[i-24] = pgm_read_word_near(BPVTable + 72*randNumber + i);
-      }
-      EllipticAdd(publicBob2,tempPub,publicBob2,curve);
-      modularAdd2(privateBob2, tempPriv, privateBob2, curve);
-
-    }
-
-    if (!uECC_sign(privateAlice2, hash3, sizeof(hash3), sig, curve))
-    {
-      printf("\nuECC_sign() Alice failed\n");
-    }
-
-    if (!uECC_verify(publicAlice2, hash3, sizeof(hash3), sig, curve))
-    {
-      printf("uECC_verify() Alice failed\n");
-    }
-
-    if (!uECC_sign(privateBob2, hash4, sizeof(hash4), sig2, curve))
-    {
-      printf("\nuECC_sign() Bob failed\n");
-    }
+  if (!uECC_verify(tempPub, hash5, sizeof(hash5), sig3, curve)) {
+   printf("uECC_verify() temp Bob failed\n");
+   //Serial.print("uECC_verify() failed\n");
+  }
+/*  else
+  {
+    printf("\nVerify temp Bob successful. \n");
+  }*/
 
 
-    if (!uECC_verify(publicBob2, hash4, sizeof(hash4), sig2, curve))
-    {
-      printf("uECC_verify() Bob failed\n");
-    }
+  for (unsigned j = 0; j < 7; j++)
+  {
+  randNumber = rand()%160;
+  for (unsigned i = 0; i < 24; i++)
+  {
+    privateBob2[i] = pgm_read_word_near(BPVTable + 72*randNumber + i);
+    //privateBob2[i] = *(BPVTable + 72*randNumber + i);
+
+  }
+
+  for (unsigned i = 24; i < 72; i++)
+  {
+    publicBob2[i-24] = pgm_read_word_near(BPVTable + 72*randNumber + i);
+    //publicBob2[i-24] = *(BPVTable + 72*randNumber + i);
+
+  }
+  EllipticAdd(publicBob2,tempPub,publicBob2,curve);
+  modularAdd2(privateBob2, tempPriv, privateBob2, curve);
+
+  }
+
+  if (!uECC_sign(privateAlice2, hash3, sizeof(hash3), sig, curve)) {
+   printf("\nuECC_sign() Alice failed\n");
+   //Serial.print("uECC_sign() failed\n");
+  }
+  /*else
+  {
+    printf("\nSign Alice successful. \n");
+  }*/
 
 
-    d = clock();
-    time2 = time2+double(d-c)/double(CLOCKS_PER_SEC);
+  if (!uECC_verify(publicAlice2, hash3, sizeof(hash3), sig, curve)) {
+   printf("uECC_verify() Alice failed\n");
+   //Serial.print("uECC_verify() failed\n");
+  }
+  /*else
+  {
+    printf("\nVerify Alice successful. \n");
+  }*/
 
+  if (!uECC_sign(privateBob2, hash4, sizeof(hash4), sig2, curve)) {
+   printf("\nuECC_sign() Bob failed\n");
+   //Serial.print("uECC_sign() failed\n");
+  }
+  /*else
+  {
+    printf("\nSign Bob successful. \n");
+  }*/
+
+
+  if (!uECC_verify(publicBob2, hash4, sizeof(hash4), sig2, curve)) {
+   printf("uECC_verify() Bob failed\n");
+   //Serial.print("uECC_verify() failed\n");
+  }
+  /*else
+  {
+    printf("\nVerify Bob successful. \n");
+  }*/
+
+  d = clock();
+  time2 = time2+double(d-c)/double(CLOCKS_PER_SEC);
+  //clockcycle2 = clockcycle2 + microsecondsToClockCycles(d-c);
+  //  Serial.print("Made key 2 in ");
+  //cout<<clockcycle2<<"\n";
+
+
+	  //a = micros();
     a = clock();
     int r = uECC_shared_secret2(publicBob2, privateAlice2, pointAlice2, curve);
-
+    //b = micros();
     b = clock();
     time1 = time1+double(b-a)/double(CLOCKS_PER_SEC);
+    //clockcycle = clockcycle + microsecondsToClockCycles(b-a);
 
-    if (!r)
-    {
-  		cout<<"shared_secret() failed (1)\n";
-  		return 0;
+    if (!r) {
+		cout<<"shared_secret() failed (1)\n";
+		return 0;
 	  }
 
-
+	  //c = micros();
     c = clock();
 	  r = uECC_shared_secret2(publicAlice2, privateBob2, pointBob2, curve);
+	  //d = micros();
     d = clock();
+    //clockcycle2 = clockcycle2 + microsecondsToClockCycles(d-c);
     time2 = time2+double(d-c)/double(CLOCKS_PER_SEC);
 
-    if (!r)
-    {
-  		printf("shared_secret() failed (1)\n");
-  		return 0;
+    if (!r) {
+		printf("shared_secret() failed (1)\n");
+		return 0;
 	  }
+
+
 
 	  r = uECC_shared_secret2(publicBob1, hash2, pointAlice1, curve);
-
-    if (!r)
-    {
-      printf("shared_secret() failed (1)\n");
-  		return 0;
+	  if (!r) {
+		//Serial.print("shared_secret() failed (1)\n");
+    printf("shared_secret() failed (1)\n");
+		return 0;
 	  }
-
 	  EllipticAdd(pointAlice1, publicCA, pointAlice1, curve);
 	  r = uECC_shared_secret2(pointAlice1, privateAlice1, pointAlice1, curve);
-	  if (!r)
-    {
-		   printf("shared_secret() failed (1)\n");
-	     return 0;
+	  if (!r) {
+		//Serial.print("shared_secret() failed (1)\n");
+    printf("shared_secret() failed (1)\n");
+
+		return 0;
 	  }
 
 	  r = uECC_shared_secret2(publicAlice1, hash, pointBob1, curve);
-	  if (!r)
-    {
-		   printf("shared_secret() failed (1)\n");
-       return 0;
-	  }
+	  if (!r) {
+		//Serial.print("shared_secret() failed (1)\n");
+    printf("shared_secret() failed (1)\n");
 
+    return 0;
+	  }
 	  EllipticAdd(pointBob1, publicCA, pointBob1, curve);
 	  r = uECC_shared_secret2(pointBob1, privateBob1, pointBob1, curve);
 
-	  a = clock();
+	  //a = micros();
+    a = clock();
 	  EllipticAdd(pointAlice1, pointAlice2, pointAlice1, curve);
-
+	  //b = micros();
     b = clock();
+    //clockcycle = clockcycle + microsecondsToClockCycles(b-a);
     time1 = time1+double(b-a)/double(CLOCKS_PER_SEC);
 
+    //Serial.print("Arazi in: "); Serial.println(clockcycle);
+
+
+	  //c = micros();
     c = clock();
 	  EllipticAdd(pointBob1, pointBob2, pointBob1, curve);
-
+	  //d = micros();
     d = clock();
+    //clockcycle2 = clockcycle2 + microsecondsToClockCycles(d-c);
     time2 = time2+double(d-c)/double(CLOCKS_PER_SEC);
-
     totaltime += time1+time2;
     loopcount +=1 ;
     printf("Total time taken till iteration %d :",loopcount);
@@ -369,15 +451,36 @@ int main()
     }
 
     printf("%.4f  seconds\n",progtime+totaltime);
-
-	  if (memcmp(pointAlice1, pointBob1, 24) != 0)
+    //Serial.print("Arazi in: "); Serial.println(clockcycle2);
+/*
+    printf("PointAlice1: \n");
+    for (int i=0;i<24;i++)
     {
-		    printf("Shared secrets are not identical!\n");
-	  }
-    else
-    {
-		    printf("Shared secrets are identical\n");
+      printf("%02x  ",(unsigned int)(unsigned char)pointAlice1[i]);
+        //cout<<hex<<setfill('0')<<setw(2)<<(unsigned int)(unsigned char)pointAlice1[i]<<"  ";
     }
+    printf("\n---------------------------PointBob1: \n");
+    for (int i=0;i<24;i++)
+    {
+      printf("%02x  ",(unsigned int)(unsigned char)pointBob1[i]);
+
+        //cout<<hex<<setfill('0')<<setw(2)<<(unsigned int)(unsigned char)pointBob1[i]<<"  ";
+    }
+*/
+	  if (memcmp(pointAlice1, pointBob1, 24) != 0) {
+		//Serial.print("Shared secrets are not identical!\n");
+    printf("Shared secrets are not identical!\n");
+	  } else {
+		//Serial.print("Shared secrets are identical\n");
+    printf("Shared secrets are identical\n");
+
+    }
+    //loop--;
 	}
 	return 0;
 }
+//void setup() {
+  //Serial.begin(115200);
+  //Serial.print("Testing BPV+Arazi\n");
+  //uECC_set_rng(&RNG);
+//}
