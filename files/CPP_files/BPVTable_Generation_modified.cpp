@@ -13,65 +13,53 @@
 #include <stdint.h>
 #include <time.h>
 
-extern "C" {
+extern "C"
+{
 
-static int RNG(uint8_t *dest, unsigned size) {
-  // Use the least-significant bits from the ADC for an unconnected pin (or connected to a source of
-  // random noise). This can take a long time to generate random data if the result of analogRead(0)
-  // doesn't change very frequently.
-  while (size) {
-    uint8_t val = 0;
-    for (unsigned i = 0; i < 8; ++i) {
-      //int init = analogRead(0);
-      int init = rand()%1024;
-      int count = 0;
-      //while (analogRead(0) == init) {
-      //  ++count;
-      //}
+  static int RNG(uint8_t *dest, unsigned size)
+  {
+    //generating bits for keys
+    while (size)
+    {
+      uint8_t val = 0;
+      int init;
 
-      if (count == 0) {
-         val = (val << 1) | (init & 0x01);
-      } else {
-         val = (val << 1) | (count & 0x01);
+      for (unsigned i = 0; i < 8; ++i)
+      {
+        init = rand()%1024;
+
+        val = (unsigned char)(val << 1) | (init & 0x01);
+
       }
+
+
+      *dest = val;
+      ++dest;
+      --size;
     }
-    *dest = val;
-    ++dest;
-    --size;
-  }
-  // NOTE: it would be a good idea to hash the resulting random data using SHA-256 or similar.
   return 1;
-}
+  }
 
-}  // extern "C"
-
+}  // extern "C" ends
 
 SHA256 sha256;
 
 int main()
 {
-//void setup() {
-  //Serial.begin(115200);
-  //Serial.print("Testing Arazi\n");
   printf("BPV Table generation ");
   uECC_set_rng(&RNG);
 
-  //randomSeed(analogRead(0));
   srand(time(0));
   const struct uECC_Curve_t * curve = uECC_secp192r1();
- // uint8_t privateCA[24];
-  //uint8_t publicCA[48];
 
   uint8_t privateAlice1[24];
   uint8_t privateAlice2[24];
 
-  //uint8_t privateBob1[24];
   uint8_t privateBob2[24];
 
   uint8_t publicAlice1[48];
   uint8_t publicAlice2[48];
 
-  //uint8_t publicBob1[48];
   uint8_t publicBob2[48];
 
   uint8_t hash[24] = {0};
@@ -103,35 +91,34 @@ int main()
   EllipticAdd(pointAlice1, publicCA, pointAlice1, curve);
 
 
-  //Serial.print("const PROGMEM  uint8_t BPVTable[] = {");
   printf("const PROGMEM  uint8_t BPVTable[] = { ");
-  for (unsigned i = 0; i < 160; ++i) {
+  for (unsigned i = 0; i < 160; ++i)
+  {
 
     uECC_make_key(publicAlice1, privateAlice1, curve);
-    for (unsigned j = 0; j < 24; ++j) {
-      printf("0x%02x, ",privateAlice1[j]);
-      //Serial.print("0x"); Serial.print(privateAlice1[j], HEX); Serial.print(", ");
+    for (unsigned j = 0; j < 24; ++j)
+    {
+      if (i!=159 && j!=23)
+        printf("0x%02x, ",privateAlice1[j]);
+      else
+        printf("0x%02x ",privateAlice1[j]);
     }
-//    for (unsigned j = 0; j < 48; ++j) {
-//      Serial.print("0x"); Serial.print(publicAlice1[j], HEX); Serial.print(", ");
-//    }
 
     int r = uECC_shared_secret2(pointAlice1, privateAlice1, pointBob1, curve);
-    if (!r) {
+    if (!r)
+    {
   		printf("shared_secret() failed (1)\n");
   		return 0;
 	  }
-    for (unsigned j = 0; j < 48; ++j) {
-      printf("0x%02x, ",pointBob1[j]);
-      //Serial.print("0x"); Serial.print(pointBob1[j], HEX); Serial.print(", ");
+    for (unsigned j = 0; j < 48; ++j)
+    {
+      if (j!=47)
+        printf("0x%02x, ",pointBob1[j]);
+      else
+        printf("0x%02x ",pointBob1[j]);
     }
 
   }
-  //Serial.print("};");
   printf(" };\n");
-
-
-//}
   return 0;
 }
-//void loop() {}
