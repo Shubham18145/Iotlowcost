@@ -130,6 +130,46 @@ int main()
   {
     printf("uECC_verify() CA failed\n");
   }
+    /*else
+    {
+      printf("\nVerify CA successful. \n");
+    }*/
+
+
+/*
+    cout<<"publicca\n";
+
+    for (int i=0;i<48;i++)
+    {
+      cout<<hex<<setfill('0')<<setw(2)<<(unsigned int)(unsigned char)publicCA[i]<<" ";
+    }
+    cout<<"\nprivateca\n";
+    for (int i=0;i<24;i++)
+    {
+      cout<<hex<<setfill('0')<<setw(2)<<(unsigned int)(unsigned char)privateCA[i]<<" ";
+    }
+    cout<<"\npublicalice1\n";
+    for (int i=0;i<48;i++)
+    {
+      cout<<hex<<setfill('0')<<setw(2)<<(unsigned int)(unsigned char)publicAlice1[i]<<" ";
+    }
+    cout<<"\nprivatealice1\n";
+    for (int i=0;i<24;i++)
+    {
+      cout<<hex<<setfill('0')<<setw(2)<<(unsigned int)(unsigned char)privateAlice1[i]<<" ";
+    }
+    cout<<"\npublicbob1\n";
+    for (int i=0;i<48;i++)
+    {
+      cout<<hex<<setfill('0')<<setw(2)<<(unsigned int)(unsigned char)publicBob1[i]<<" ";
+    }
+    cout<<"\nprivatebob1\n";
+    for (int i=0;i<24;i++)
+    {
+      cout<<hex<<setfill('0')<<setw(2)<<(unsigned int)(unsigned char)privateBob1[i]<<" ";
+    }
+    cout<<"\n";
+*/
 
   a = clock();
 
@@ -153,16 +193,16 @@ int main()
 
   a = clock();
   int status4 = uECC_make_key(publicAlice2, privateAlice2, curve);
-  // if (status4==0)
-  //   printf("uECC_make_key(publicAlice2, privateAlice2, curve) failed\n");
+  if (status4==0)
+    printf("uECC_make_key(publicAlice2, privateAlice2, curve) failed\n");
 
   b = clock();
   time1 = time1+double(b-a)/double(CLOCKS_PER_SEC);
 
   c = clock();
   int status5 =  uECC_make_key(publicBob2, privateBob2, curve);
-  // if (status5==0)
-  //   printf("uECC_make_key(publicBob2, privateBob2, curve) failed\n");
+  if (status5==0)
+    printf("uECC_make_key(publicBob2, privateBob2, curve) failed\n");
 
   d = clock();
   time2 = time2+double(d-c)/double(CLOCKS_PER_SEC);
@@ -173,18 +213,16 @@ int main()
   b = clock();
   time1 = time1+double(b-a)/double(CLOCKS_PER_SEC);
 
-  if (!r)
-  {
-	   printf("shared_secret() failed (1)\n");
-     return 0;
+  if (!r) {
+	printf("shared_secret() failed (1)\n");
+    return 0;
   }
 
   c = clock();
   r = uECC_shared_secret2(publicAlice2, privateBob2, pointBob2, curve);
   d = clock();
   time2 = time2+double(d-c)/double(CLOCKS_PER_SEC);
-  if (!r)
-  {
+  if (!r) {
     printf("shared_secret() failed (1)\n");
     return 0;
   }
@@ -192,27 +230,22 @@ int main()
 
 
   r = uECC_shared_secret2(publicBob1, hash2, pointAlice1, curve);
-  if (!r)
-  {
+  if (!r) {
     printf("shared_secret() failed (1)\n");
     return 0;
   }
-
   EllipticAdd(pointAlice1, publicCA, pointAlice1, curve);
   r = uECC_shared_secret2(pointAlice1, privateAlice1, pointAlice1, curve);
-  if (!r)
-  {
+  if (!r) {
     printf("shared_secret() failed (1)\n");
     return 0;
   }
 
   r = uECC_shared_secret2(publicAlice1, hash, pointBob1, curve);
-  if (!r)
-  {
+  if (!r) {
     printf("shared_secret() failed (1)\n");
     return 0;
   }
-
   EllipticAdd(pointBob1, publicCA, pointBob1, curve);
   r = uECC_shared_secret2(pointBob1, privateBob1, pointBob1, curve);
 
@@ -242,6 +275,25 @@ int main()
   }
 
   printf("%.4f  seconds\n",progtime+totaltime);
+  //printf("Totaltime: %.6f seconds\n",totaltime);
+
+  //cout<<"PointAlice1: "<<pointAlice1<<"\n";
+  //cout<<"PointBob1: "<<pointBob1<<"\n";
+/*
+  printf("PointAlice1: \n");
+  for (int i=0;i<24;i++)
+  {
+    printf("%02x  ",(unsigned int)(unsigned char)pointAlice1[i]);
+      //cout<<hex<<setfill('0')<<setw(2)<<(unsigned int)(unsigned char)pointAlice1[i]<<"  ";
+  }
+  printf("\n---------------------------PointBob1: \n");
+  for (int i=0;i<24;i++)
+  {
+    printf("%02x  ",(unsigned int)(unsigned char)pointBob1[i]);
+
+      //cout<<hex<<setfill('0')<<setw(2)<<(unsigned int)(unsigned char)pointBob1[i]<<"  ";
+  }
+*/
 
   if (memcmp(pointAlice1, pointBob1, 24) != 0) {
     printf("Shared secrets are not identical!\n");
