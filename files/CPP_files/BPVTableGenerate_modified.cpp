@@ -1,15 +1,17 @@
-#include "uECC_vli.h"
-#include "uECC.c"
-#include "types.h"
-#include "SHA256.cpp"
-#include <string.h>
-//#include <avr/pgmspace.h>
+//Code at https://github.com/ozgurozmen/OptimizedPKCSuite/tree/master/ATmega2560/BPVTableGeneration
+//modified for performing experiments on Raspberry Pi by
+//Shubham Kumar, shubham18145@iiitd.ac.in, IIIT Delhi
+#include "header/uECC_vli.h"
+#include "header/uECC.c"
+#include "header/types.h"
 #include <stdio.h>
-#include <iomanip>
-#include <stdint.h>
+#include "header/SHA256.cpp"
+#include <string.h>
 #include <iostream>
-#include <time.h>
+#include <iomanip>
 #include <stdlib.h>
+#include <stdint.h>
+#include <time.h>
 
 extern "C" {
 
