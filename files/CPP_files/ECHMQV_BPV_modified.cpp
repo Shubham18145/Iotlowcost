@@ -290,6 +290,8 @@ int main()
     {
       printf("Shared secrets are identical\n");
     }
+    if (progtime+totaltime>100)
+      break;
   }
   return 0;
 }

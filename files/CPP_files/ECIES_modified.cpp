@@ -165,7 +165,8 @@ int main()
       totaltime = totaltime-integraltime;
     }
     printf("%.4f  seconds\n",progtime+totaltime);
-
+    if (progtime+totaltime>100)
+      break;
   }
 
   return 0;
