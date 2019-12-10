@@ -1,4 +1,4 @@
-//Code at https://github.com/ozgurozmen/OptimizedPKCSuite/tree/master/ATmega2560/ECIES
+//Code at https://github.com/ozgurozmen/OptimizedPKCSuite/tree/master/ATmega2560/Signcryption
 //modified for performing experiments on Raspberry Pi by
 //Shubham Kumar, shubham18145@iiitd.ac.in, IIIT Delhi
 #include "header/uECC_vli.h"
