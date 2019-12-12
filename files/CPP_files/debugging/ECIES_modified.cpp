@@ -1,7 +1,6 @@
 //Code at https://github.com/ozgurozmen/OptimizedPKCSuite/tree/master/ATmega2560/ECIES
 //modified for performing experiments on Raspberry Pi by
 //Shubham Kumar, shubham18145@iiitd.ac.in, IIIT Delhi
-//ECIES
 #include "header/uECC_vli.h"
 #include "header/uECC.c"
 #include "header/types.h"
@@ -141,14 +140,14 @@ int main()
     sha256.update(messageBob, sizeof(messageBob));
     sha256.finalizeHMAC(keyBobMac, sizeof(keyBobMac), tagBob, sizeof(tagBob));
 
-    // if (memcmp(tagBob, tag, 16) != 0)
-    // {
-    //   printf("Message IS NOT Authenticated!\n");
-    // }
-    // else
-    // {
-    //   printf("Message is Authenticated\n");
-    // }
+    if (memcmp(tagBob, tag, 16) != 0)
+    {
+      printf("Message IS NOT Authenticated!\n");
+    }
+    else
+    {
+      printf("Message is Authenticated\n");
+    }
 
     d = clock();
 

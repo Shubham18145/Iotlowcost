@@ -1,6 +1,7 @@
 //Code at https://github.com/ozgurozmen/OptimizedPKCSuite/tree/master/ATmega2560/ECHMQV_BPV
 //modified for performing experiments on Raspberry Pi by
 //Shubham Kumar, shubham18145@iiitd.ac.in, IIIT Delhi
+//ECHMQV+AQ-BPV
 #include "header/uECC_vli.h"
 #include "header/uECC.c"
 #include "header/types.h"
@@ -281,14 +282,14 @@ int main()
 
     printf("%.4f  seconds\n",progtime+totaltime);
 
-    if (memcmp(pointAlice1, pointBob1, 24) != 0)
-    {
-      printf("Shared secrets are not identical!\n");
-    }
-    else
-    {
-      printf("Shared secrets are identical\n");
-    }
+    // if (memcmp(pointAlice1, pointBob1, 24) != 0)
+    // {
+    //   printf("Shared secrets are not identical!\n");
+    // }
+    // else
+    // {
+    //   printf("Shared secrets are identical\n");
+    // }
     if (progtime+totaltime>100)
       break;
   }

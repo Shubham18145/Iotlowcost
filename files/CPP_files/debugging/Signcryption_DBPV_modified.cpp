@@ -1,7 +1,6 @@
 //Code at https://github.com/ozgurozmen/OptimizedPKCSuite/tree/master/ATmega2560/Signcryption_DBPV
 //modified for performing experiments on Raspberry Pi by
 //Shubham Kumar, shubham18145@iiitd.ac.in, IIIT Delhi
-//Signcryption+AQ-DBPV
 #include "header/uECC_vli.h"
 #include "header/uECC.c"
 #include "header/types.h"
@@ -213,14 +212,14 @@ int main()
     sha256.finalizeHMAC(keyBobSign, sizeof(keyBobSign), tagBob, sizeof(tagBob));
 
 
-    // if (memcmp(tagBob, tag, 16) != 0)
-    // {
-    //   printf("Message IS NOT Authenticated!\n");
-    // }
-    // else
-    // {
-    //   printf("Message is Authenticated\n");
-    // }
+    if (memcmp(tagBob, tag, 16) != 0)
+    {
+      printf("Message IS NOT Authenticated!\n");
+    }
+    else
+    {
+      printf("Message is Authenticated\n");
+    }
     d = clock();
     double time2 = double(d-c)/double(CLOCKS_PER_SEC);
     totaltime += time1+time2;

@@ -11,39 +11,6 @@ all:
 	g++ Signcryption_modified.cpp -o object_files/prog_num10 -fomit-frame-pointer
 	g++ Signcryption_DBPV_modified.cpp -o object_files/prog_num11 -fomit-frame-pointer
 
-prog1:
-	./prog_num1
-
-prog2:
-	./prog_num2
-
-prog3:
-	./prog_num3
-
-prog4:
-	./prog_num4
-
-prog5:
-	./prog_num5
-
-prog6:
-	./prog_num6
-
-#prog7:
-	#./prog_num7
-
-#prog8:
-	#./prog_num8
-
-#prog9:
-	#./prog_num9
-
-#prog10:
-	#./prog_num10
-
-#prog11:
-	#./prog_num11
-
 
 clean:
 	rm -f object_files/prog_num*
