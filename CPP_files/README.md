@@ -30,7 +30,7 @@ make clean
 
 1.  Arazi_modified.cpp(Arazi-Qi or AQ)
 2.  Arazi_BPV_modified.cpp(AQ-BPV)
-3.  BPV-ECDSA_modified.cpp(ECDH+ECDSA+BPV)
+3.  BPV-ECDSA_modified.cpp(ECDSA+BPV)
 4.  BPVTable_Generation_modified.cpp(Generation of BPV Table)
 5.  ECHMQV_modified.cpp(ECHMQV)
 6.  ECHMQV_BPV_modified.cpp(ECHMQV+AQ-BPV)
