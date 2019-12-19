@@ -1,7 +1,7 @@
 //Code at https://github.com/ozgurozmen/OptimizedPKCSuite/tree/master/ATmega2560/BPV-ECDSA
 //modified for performing experiments on Raspberry Pi by
 //Shubham Kumar, shubham18145@iiitd.ac.in, IIIT Delhi
-//ECDH+ECDSA+Certificate
+//ECDSA+Certificate
 #include "header/uECC_vli.h"
 #include "header/uECC.c"
 #include "header/types.h"
