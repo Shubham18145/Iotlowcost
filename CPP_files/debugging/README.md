@@ -2,16 +2,27 @@ There are eleven C++ programs which can be executed on Raspberry Pi 2 by first c
 make
 
 Then executing each program individually as:
+
 object_files/prog_num1
+
 object_files/prog_num2
+
 object_files/prog_num3
+
 object_files/prog_num4
+
 object_files/prog_num5
+
 object_files/prog_num6
+
 object_files/prog_num7
+
 object_files/prog_num8
+
 object_files/prog_num9
+
 object_files/prog_num10
+
 object_files/prog_num11
 
 
