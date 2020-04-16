@@ -199,7 +199,7 @@ int main()
 	  }
 	  if (is_null == 0)
 		break;
-	}while(is_null);
+	}while(1);
 
 	  b = clock();
     time1 = time1+double(b-a)/double(CLOCKS_PER_SEC);
