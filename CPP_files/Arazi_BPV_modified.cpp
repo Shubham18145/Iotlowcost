@@ -197,6 +197,8 @@ int main()
     	if (publicAlice2[i] == 0 && publicAlice2[i+1] == 0 && i!=47)
 			is_null = 1;
 	  }
+	  if (is_null == 0)
+		break;
 	}while(is_null);
 
 	  b = clock();
@@ -250,9 +252,11 @@ int main()
 		for (unsigned int i = 0; i < 48; i++)
 		{
 			if (publicBob2[i] == 0 && publicBob2[i+1] == 0 && i!=47)
-					is_null = 1;
+				is_null = 1;
 		}
-	}while(is_null);
+		if (is_null == 0)
+				break;
+	}while(1);
 	/*printf("PublicAlice2: \n");
 	for (int k=0;k<48;k++)
 	  {
