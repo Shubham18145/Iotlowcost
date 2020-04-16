@@ -192,9 +192,11 @@ int main()
   		modularAdd2(privateAlice2, tempPriv, privateAlice2, curve);
 
 	  }
-	  if (publicAlice2[i-24]==0 && publicAlice2[i-23]==0 && i!=71)
+	  for (unsigned int i = 0; i < 48; i++)
+	  {
+    	if (publicAlice2[i] == 0 && publicAlice2[i+1] == 0 && i!=47)
 			is_null = 1;
-		//printf("\n");
+	  }
 	}while(is_null);
 
 	  b = clock();
@@ -223,28 +225,32 @@ int main()
       printf("uECC_verify() temp Bob failed\n");
     }
 
-	do{
-    for (unsigned j = 0; j < 7; j++)
-    {
-      randNumber = rand()%160;
+	do
+	{
+		for (unsigned j = 0; j < 7; j++)
+		{
+		  randNumber = rand()%160;
 
-      for (unsigned i = 0; i < 24; i++)
-      {
-        privateBob2[i] = pgm_read_word_near(BPVTable + 72*randNumber + i);
-      }
+		  for (unsigned i = 0; i < 24; i++)
+		  {
+			privateBob2[i] = pgm_read_word_near(BPVTable + 72*randNumber + i);
+		  }
 
-      for (unsigned i = 24; i < 72; i++)
-      {
-        publicBob2[i-24] = pgm_read_word_near(BPVTable + 72*randNumber + i);
-		
-      }
-	 
-      EllipticAdd(publicBob2,tempPub,publicBob2,curve);
-      modularAdd2(privateBob2, tempPriv, privateBob2, curve);
+		  for (unsigned i = 24; i < 72; i++)
+		  {
+			publicBob2[i-24] = pgm_read_word_near(BPVTable + 72*randNumber + i);
+			
+		  }
+		 
+		  EllipticAdd(publicBob2,tempPub,publicBob2,curve);
+		  modularAdd2(privateBob2, tempPriv, privateBob2, curve);
 
-    }
-	if (publicBob2[i-24]==0 && publicBob2[i-23]==0 && i!=71)
-			is_null = 1;
+		}
+		for (unsigned int i = 0; i < 48; i++)
+		{
+			if (publicBob2[i] == 0 && publicBob2[i+1] == 0 && i!=47)
+					is_null = 1;
+		}
 	}while(is_null);
 	/*printf("PublicAlice2: \n");
 	for (int k=0;k<48;k++)
