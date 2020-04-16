@@ -90,12 +90,7 @@ int main()
 	uint8_t sig[48] = {0};
 	uint8_t hash4[24] = {0};
 	uint8_t sig2[48] = {0};
-	uint8_t hash5[24] = {0};
-	uint8_t sig3[48] = {0};
-	uint8_t hash6[24] = {0};
-	uint8_t sig4[48] = {0};
-
-
+	
     clock_t a,b,c,d;
 
 	long randNumber;
@@ -104,27 +99,6 @@ int main()
 	uECC_make_key(publicAlice1, privateAlice1, curve);
 	uECC_make_key(publicBob1, privateBob1, curve);
 
-	/*
-    if (!uECC_sign(privateAlice1, hash5, sizeof(hash5), sig3, curve))
-    {
-      printf("\nuECC_sign() Alice failed\n");
-    }
-
-    if (!uECC_verify(publicAlice1, hash5, sizeof(hash5), sig3, curve))
-    {
-      printf("uECC_verify() Alice failed\n");
-    }
-
-    if (!uECC_sign(privateBob1, hash6, sizeof(hash6), sig4, curve))
-    {
-      printf("\nuECC_sign() Bob failed\n");
-    }
-
-    if (!uECC_verify(publicBob1, hash6, sizeof(hash6), sig4, curve))
-    {
-      printf("uECC_verify() Bob failed\n");
-    }
-	*/
 	
     a = clock();
 	  sha256.reset();
@@ -181,7 +155,7 @@ int main()
     }
     //printf("\n");
 
-    if (!uECC_sign(tempPriv, hash5, sizeof(hash5), sig3, curve))
+/*    if (!uECC_sign(tempPriv, hash5, sizeof(hash5), sig3, curve))
     {
       printf("\nuECC_sign() temp Alice failed\n");
     }
@@ -190,7 +164,11 @@ int main()
     {
       printf("uECC_verify() temp Alice failed\n");
     }
-
+*/
+	
+	do
+	{
+		int is_null = 0;
 	  for (unsigned j = 0; j < 7; j++)
 	  {
 
@@ -207,16 +185,17 @@ int main()
   		{
         publicAlice2[i-24] = (pgm_read_word_near(BPVTable + 72*randNumber + i));
         //publicAlice2[i-24] = (*(BPVTable + 72*randNumber + i));
-		printf("%02x ",publicAlice2[i-24]);
-		if (publicAlice2[i-24]==0)
-			printf("[%d]: -0-",i-24);
-		printf("\n");
+		//printf("%02x ",publicAlice2[i-24]);
+		
       }
   		EllipticAdd(publicAlice2,tempPub,publicAlice2,curve);
   		modularAdd2(privateAlice2, tempPriv, privateAlice2, curve);
 
 	  }
-
+	  if (publicAlice2[i-24]==0 && publicAlice2[i-23]==0 && i!=71)
+			is_null = 1;
+		//printf("\n");
+	}while(is_null);
 
 	  b = clock();
     time1 = time1+double(b-a)/double(CLOCKS_PER_SEC);
@@ -244,6 +223,7 @@ int main()
       printf("uECC_verify() temp Bob failed\n");
     }
 
+	do{
     for (unsigned j = 0; j < 7; j++)
     {
       randNumber = rand()%160;
@@ -256,16 +236,16 @@ int main()
       for (unsigned i = 24; i < 72; i++)
       {
         publicBob2[i-24] = pgm_read_word_near(BPVTable + 72*randNumber + i);
-		printf("%02x ",publicBob2[i-24]);
-		if (publicBob2[i-24]==0)
-			printf("[%d]: -0-",i-24);
-			//printf("-0-");
+		
       }
-	  printf("\n");
+	 
       EllipticAdd(publicBob2,tempPub,publicBob2,curve);
       modularAdd2(privateBob2, tempPriv, privateBob2, curve);
 
     }
+	if (publicBob2[i-24]==0 && publicBob2[i-23]==0 && i!=71)
+			is_null = 1;
+	}while(is_null);
 	/*printf("PublicAlice2: \n");
 	for (int k=0;k<48;k++)
 	  {
