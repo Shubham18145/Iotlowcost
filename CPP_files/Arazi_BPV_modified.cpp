@@ -86,23 +86,23 @@ int main()
 	  uint8_t pointAlice2[48];
 	  uint8_t pointBob2[48];
 
-    uint8_t hash3[24] = {0};
-    uint8_t sig[48] = {0};
-    uint8_t hash4[24] = {0};
-    uint8_t sig2[48] = {0};
-    uint8_t hash5[24] = {0};
-    uint8_t sig3[48] = {0};
-    uint8_t hash6[24] = {0};
-    uint8_t sig4[48] = {0};
+	uint8_t hash3[24] = {0};
+	uint8_t sig[48] = {0};
+	uint8_t hash4[24] = {0};
+	uint8_t sig2[48] = {0};
+	uint8_t hash5[24] = {0};
+	uint8_t sig3[48] = {0};
+	uint8_t hash6[24] = {0};
+	uint8_t sig4[48] = {0};
 
-    
-	  clock_t a,b,c,d;
 
-	  long randNumber;
+    clock_t a,b,c,d;
 
-	  uECC_make_key(publicCA, privateCA, curve);
-	  uECC_make_key(publicAlice1, privateAlice1, curve);
-	  uECC_make_key(publicBob1, privateBob1, curve);
+	long randNumber;
+
+	uECC_make_key(publicCA, privateCA, curve);
+	uECC_make_key(publicAlice1, privateAlice1, curve);
+	uECC_make_key(publicBob1, privateBob1, curve);
 
 	/*
     if (!uECC_sign(privateAlice1, hash5, sizeof(hash5), sig3, curve))
@@ -135,7 +135,7 @@ int main()
     double time1 = double(b-a)/double(CLOCKS_PER_SEC);
 
 
-	  c = clock();
+	c = clock();
 	  sha256.reset();
 	  sha256.update(publicBob1, sizeof(publicBob1));
 	  sha256.finalize(hash2, sizeof(hash2));
@@ -266,6 +266,11 @@ int main()
     if (!uECC_verify(publicAlice2, hash3, sizeof(hash3), sig, curve))
     {
       printf("uECC_verify() Alice failed\n");
+	  for (int k=0;k<48;k++)
+	  {
+		  printf("%02x ", (unsigned int)(unsigned char)publicAlice2[k]);
+	  }
+	  printf("\n");
     }
 
     if (!uECC_sign(privateBob2, hash4, sizeof(hash4), sig2, curve))
@@ -277,6 +282,11 @@ int main()
     if (!uECC_verify(publicBob2, hash4, sizeof(hash4), sig2, curve))
     {
       printf("uECC_verify() Bob failed\n");
+	  for (int k=0;k<48;k++)
+	  {
+		  printf("%02x ", (unsigned int)(unsigned char)publicBob2[k]);
+	  }
+	  printf("\n");
     }
 
 
