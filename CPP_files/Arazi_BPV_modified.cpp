@@ -207,8 +207,10 @@ int main()
   		{
         publicAlice2[i-24] = (pgm_read_word_near(BPVTable + 72*randNumber + i));
         //publicAlice2[i-24] = (*(BPVTable + 72*randNumber + i));
+		printf("%02x",publicAlice2[i-24]);
 		if (publicAlice2[i-24]==0)
-			printf("-0-");
+			printf("[%d]: -0-",i-24);
+		
       }
   		EllipticAdd(publicAlice2,tempPub,publicAlice2,curve);
   		modularAdd2(privateAlice2, tempPriv, privateAlice2, curve);
@@ -254,14 +256,16 @@ int main()
       for (unsigned i = 24; i < 72; i++)
       {
         publicBob2[i-24] = pgm_read_word_near(BPVTable + 72*randNumber + i);
+		printf("%02x",publicBob2[i-24]);
 		if (publicBob2[i-24]==0)
-			printf("-0-");
+			printf("[%d]: -0-",i-24);
+			//printf("-0-");
       }
       EllipticAdd(publicBob2,tempPub,publicBob2,curve);
       modularAdd2(privateBob2, tempPriv, privateBob2, curve);
 
     }
-	printf("PublicAlice2: \n");
+	/*printf("PublicAlice2: \n");
 	for (int k=0;k<48;k++)
 	  {
 		  printf("%02x ", (unsigned int)(unsigned char)publicAlice2[k]);
@@ -273,7 +277,7 @@ int main()
 		  printf("%02x ", (unsigned int)(unsigned char)publicBob2[k]);
 	  }
 	  printf("\n");
-	
+	*/
     if (!uECC_sign(privateAlice2, hash3, sizeof(hash3), sig, curve))
     {
       printf("\nuECC_sign() Alice failed\n");
