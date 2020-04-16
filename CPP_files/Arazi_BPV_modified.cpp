@@ -215,7 +215,7 @@ int main()
       tempPub[i-24] = pgm_read_word_near(BPVTable + 72*randNumber + i);
     }
 
-    if (!uECC_sign(tempPriv, hash5, sizeof(hash5), sig3, curve))
+    /*if (!uECC_sign(tempPriv, hash5, sizeof(hash5), sig3, curve))
     {
       printf("\nuECC_sign() temp Bob failed\n");
     }
@@ -223,7 +223,7 @@ int main()
     if (!uECC_verify(tempPub, hash5, sizeof(hash5), sig3, curve))
     {
       printf("uECC_verify() temp Bob failed\n");
-    }
+    }*/
 
 	do
 	{
