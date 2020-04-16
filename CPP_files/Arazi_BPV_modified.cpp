@@ -62,29 +62,29 @@ int main()
 	while (true)
 	{
 	  const struct uECC_Curve_t * curve = uECC_secp192r1();
-	  uint8_t privateCA[24];
-	  uint8_t publicCA[48];
+	  uint8_t privateCA[24]={0};
+	  uint8_t publicCA[48]={0};
 
-	  uint8_t privateAlice1[24];
-	  uint8_t privateAlice2[24];
+	  uint8_t privateAlice1[24]={0};
+	  uint8_t privateAlice2[24]={0};
 
-	  uint8_t privateBob1[24];
-	  uint8_t privateBob2[24];
+	  uint8_t privateBob1[24]={0};
+	  uint8_t privateBob2[24]={0};
 
-	  uint8_t publicAlice1[48];
-	  uint8_t publicAlice2[48];
+	  uint8_t publicAlice1[48]={0};
+	  uint8_t publicAlice2[48]={0};
 
-	  uint8_t publicBob1[48];
-	  uint8_t publicBob2[48];
+	  uint8_t publicBob1[48]={0};
+	  uint8_t publicBob2[48]={0};
 
 	  uint8_t hash[24] = {0};
 	  uint8_t hash2[24] = {0};
 
-	  uint8_t pointAlice1[48];
-	  uint8_t pointBob1[48];
+	  uint8_t pointAlice1[48]={0};
+	  uint8_t pointBob1[48]={0};
 
-	  uint8_t pointAlice2[48];
-	  uint8_t pointBob2[48];
+	  uint8_t pointAlice2[48]={0};
+	  uint8_t pointBob2[48]={0};
 
 	uint8_t hash3[24] = {0};
 	uint8_t sig[48] = {0};
@@ -104,6 +104,16 @@ int main()
 	uECC_make_key(publicAlice1, privateAlice1, curve);
 	uECC_make_key(publicBob1, privateBob1, curve);
 
+	for (int k=0;k<48;k++)
+	  {
+		  printf("%02x ", (unsigned int)(unsigned char)publicAlice2[k]);
+	  }
+	  printf("\n");
+	for (int k=0;k<48;k++)
+	  {
+		  printf("%02x ", (unsigned int)(unsigned char)publicBob2[k]);
+	  }
+	  printf("\n");
 	/*
     if (!uECC_sign(privateAlice1, hash5, sizeof(hash5), sig3, curve))
     {
