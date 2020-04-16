@@ -95,7 +95,7 @@ int main()
     int status2 = uECC_make_key(publicAlice1, privateAlice1, curve);
     int status3 = uECC_make_key(publicBob1, privateBob1, curve);
 
-	
+    
     // if (status1==0)
     //   printf("uECC_make_key(publicCA, privateCA, curve) failed\n");
     // if (status2==0)
@@ -148,7 +148,7 @@ int main()
     sha256.finalize(hash2, sizeof(hash2));
 
     d = clock();
-  	double time2 = double(d-c)/double(CLOCKS_PER_SEC);
+    double time2 = double(d-c)/double(CLOCKS_PER_SEC);
 
     modularMultAdd(hash, privateAlice1, privateCA, privateAlice1, curve);
     modularMultAdd(hash2, privateBob1, privateCA, privateBob1, curve);
@@ -177,7 +177,7 @@ int main()
 
     if (!r)
     {
-  	   printf("shared_secret() failed (1)\n");
+       printf("shared_secret() failed (1)\n");
        return 0;
     }
 
@@ -255,5 +255,5 @@ int main()
     if (progtime+totaltime>100)
       break;
   }
-	return 0;
+    return 0;
 }

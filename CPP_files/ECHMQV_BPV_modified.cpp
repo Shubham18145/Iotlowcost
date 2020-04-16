@@ -57,7 +57,7 @@ int main()
   printf("Testing BPV+ECHMQV\n");
   uECC_set_rng(&RNG);
   double totaltime = 0, progtime = 0;
-	int loopcount = 0;
+    int loopcount = 0;
 
   while (true)
   {
@@ -143,21 +143,21 @@ int main()
     //printf("\n");
 
     for (unsigned j = 0; j < 7; j++)
-	  {
-		randNumber = rand()%160;
-		for (unsigned i = 0; i < 24; i++)
-		{
-		  privateAlice2[i] = pgm_read_word_near(BPVTable + 72*randNumber + i);
-		}
+      {
+        randNumber = rand()%160;
+        for (unsigned i = 0; i < 24; i++)
+        {
+          privateAlice2[i] = pgm_read_word_near(BPVTable + 72*randNumber + i);
+        }
 
-		for (unsigned i = 24; i < 72; i++)
-		{
-		  publicAlice2[i-24] = pgm_read_word_near(BPVTable + 72*randNumber + i);
-		}
+        for (unsigned i = 24; i < 72; i++)
+        {
+          publicAlice2[i-24] = pgm_read_word_near(BPVTable + 72*randNumber + i);
+        }
     EllipticAdd(publicAlice2,tempPub,publicAlice2,curve);
-		modularAdd2(privateAlice2, tempPriv, privateAlice2, curve);
+        modularAdd2(privateAlice2, tempPriv, privateAlice2, curve);
 
-	  }
+      }
 
     b = clock();
     time1 = time1+double(b-a)/double(CLOCKS_PER_SEC);
@@ -270,7 +270,7 @@ int main()
     time2 = time2 + double(d-c)/double(CLOCKS_PER_SEC);
 
     totaltime += time1+time2;
-	  loopcount +=1 ;
+      loopcount +=1 ;
     printf("Total time taken till iteration %d :",loopcount);
     long integraltime = 0;
     if (totaltime > 1.0)

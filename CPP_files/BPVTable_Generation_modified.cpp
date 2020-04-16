@@ -108,9 +108,9 @@ int main()
     int r = uECC_shared_secret2(pointAlice1, privateAlice1, pointBob1, curve);
     if (!r)
     {
-  		printf("shared_secret() failed (1)\n");
-  		return 0;
-	  }
+        printf("shared_secret() failed (1)\n");
+        return 0;
+      }
     for (unsigned j = 0; j < 48; ++j)
     {
       if (j!=47)

@@ -19,29 +19,26 @@ using namespace std;
 extern "C"
 {
 
-  static int RNG(uint8_t *dest, unsigned size)
-  {
-    //generating bits for keys
-    while (size)
+    static int RNG(uint8_t *dest, unsigned size)
     {
-      uint8_t val = 0;
-      int init;
+        //generating bits for keys
+        while (size)
+        {
+            uint8_t val = 0;
+            int init;
 
-      for (unsigned i = 0; i < 8; ++i)
-      {
-        init = (100+i)*(size);
+            for (unsigned i = 0; i < 8; ++i)
+            {
+                init = (100+i)*(size);
+                val = (unsigned char)(val << 1) | (init & 0x01);
+            }
 
-        val = (unsigned char)(val << 1) | (init & 0x01);
-
-      }
-
-
-      *dest = val;
-      ++dest;
-      --size;
+            *dest = val;
+            ++dest;
+            --size;
+        }
+        return 1;
     }
-  return 1;
-  }
 
 }  // extern "C" ends
 
@@ -54,342 +51,271 @@ SHA256 sha256;
 
 int main()
 {
-  srand(time(0));
-  printf("Testing Arazi-BPV\n");
-  uECC_set_rng(&RNG);
-  double totaltime = 0, progtime = 0;
-  int loopcount = 0;
-	while (true)
-	{
-	  const struct uECC_Curve_t * curve = uECC_secp192r1();
-	  uint8_t privateCA[24]={0};
-	  uint8_t publicCA[48]={0};
-
-	  uint8_t privateAlice1[24]={0};
-	  uint8_t privateAlice2[24]={0};
-
-	  uint8_t privateBob1[24]={0};
-	  uint8_t privateBob2[24]={0};
-
-	  uint8_t publicAlice1[48]={0};
-	  uint8_t publicAlice2[48]={0};
-
-	  uint8_t publicBob1[48]={0};
-	  uint8_t publicBob2[48]={0};
-
-	  uint8_t hash[24] = {0};
-	  uint8_t hash2[24] = {0};
-
-	  uint8_t pointAlice1[48]={0};
-	  uint8_t pointBob1[48]={0};
-
-	  uint8_t pointAlice2[48]={0};
-	  uint8_t pointBob2[48]={0};
-
-	uint8_t hash3[24] = {0};
-	uint8_t sig[48] = {0};
-	uint8_t hash4[24] = {0};
-	uint8_t sig2[48] = {0};
-	
-    clock_t a,b,c,d;
-
-	long randNumber;
-
-	uECC_make_key(publicCA, privateCA, curve);
-	uECC_make_key(publicAlice1, privateAlice1, curve);
-	uECC_make_key(publicBob1, privateBob1, curve);
-
-	
-    a = clock();
-	  sha256.reset();
-	  sha256.update(publicAlice1, sizeof(publicAlice1));
-	  sha256.finalize(hash, sizeof(hash));
-
-    b = clock();
-    double time1 = double(b-a)/double(CLOCKS_PER_SEC);
-
-
-	c = clock();
-	  sha256.reset();
-	  sha256.update(publicBob1, sizeof(publicBob1));
-	  sha256.finalize(hash2, sizeof(hash2));
-
-    d = clock();
-    double time2 = double(d-c)/double(CLOCKS_PER_SEC);
-
-	  //  memcpy(hash, publicAlice1, sizeof(hash));
-	  //  memcpy(hash2, publicBob1, sizeof(hash2));
-
-	  modularMultAdd(hash, privateAlice1, privateCA, privateAlice1, curve);
-	  modularMultAdd(hash2, privateBob1, privateCA, privateBob1, curve);
-
-
-	  // modularAdd2(privateAlice1, privateCA, privateAlice1, curve);
-	  //modularAdd2(privateBob1, privateCA, privateBob1, curve);
-
-	  //  modularMult2(privateAlice1, hash, privateAlice1, curve);
-	  //  modularMult2(privateBob1, hash2, privateBob1, curve);
-
-	  uint8_t tempPriv[24];
-	  uint8_t tempPub[48];
-
-    a = clock();
-	  randNumber = rand()%160;
-    //printf("Random number 1: %ld\n",randNumber);
-
-    // printf("tempPriv: \n");
-
-    for (unsigned i = 0; i < 24; i++)
-	  {
-		    tempPriv[i] = pgm_read_word_near(BPVTable + 72*randNumber + i);
-
-        //printf("%02x ",(unsigned int)(unsigned char)tempPriv[i]);
-	  }
-
-    //printf("\ntempPub: \n");
-	  for (unsigned i = 24; i < 72; i++)
-	  {
-      tempPub[i-24] = pgm_read_word_near(BPVTable + 72*randNumber + i);
-
-      //printf("%02x ",(unsigned int)(unsigned char)tempPub[i-24]);
-    }
-    //printf("\n");
-
-/*    if (!uECC_sign(tempPriv, hash5, sizeof(hash5), sig3, curve))
+    srand(time(0));
+    printf("Testing Arazi-BPV\n");
+    uECC_set_rng(&RNG);
+    double totaltime = 0, progtime = 0;
+    int loopcount = 0;
+    while (true)
     {
-      printf("\nuECC_sign() temp Alice failed\n");
-    }
+        const struct uECC_Curve_t * curve = uECC_secp192r1();
+        uint8_t privateCA[24]={0};
+        uint8_t publicCA[48]={0};
 
-    if (!uECC_verify(tempPub, hash5, sizeof(hash5), sig3, curve))
-    {
-      printf("uECC_verify() temp Alice failed\n");
-    }
-*/
-	
-	do
-	{
-		int is_null = 0;
-	  for (unsigned j = 0; j < 7; j++)
-	  {
+        uint8_t privateAlice1[24]={0};
+        uint8_t privateAlice2[24]={0};
 
+        uint8_t privateBob1[24]={0};
+        uint8_t privateBob2[24]={0};
+
+        uint8_t publicAlice1[48]={0};
+        uint8_t publicAlice2[48]={0};
+
+        uint8_t publicBob1[48]={0};
+        uint8_t publicBob2[48]={0};
+
+        uint8_t hash[24] = {0};
+        uint8_t hash2[24] = {0};
+
+        uint8_t pointAlice1[48]={0};
+        uint8_t pointBob1[48]={0};
+
+        uint8_t pointAlice2[48]={0};
+        uint8_t pointBob2[48]={0};
+
+        uint8_t hash3[24] = {0};
+        uint8_t sig[48] = {0};
+        uint8_t hash4[24] = {0};
+        uint8_t sig2[48] = {0};
+
+        clock_t a,b,c,d;
+
+        long randNumber;
+
+        uECC_make_key(publicCA, privateCA, curve);
+        uECC_make_key(publicAlice1, privateAlice1, curve);
+        uECC_make_key(publicBob1, privateBob1, curve);
+
+    
+        a = clock();
+        sha256.reset();
+        sha256.update(publicAlice1, sizeof(publicAlice1));
+        sha256.finalize(hash, sizeof(hash));
+
+        b = clock();
+        double time1 = double(b-a)/double(CLOCKS_PER_SEC);
+
+
+        c = clock();
+        sha256.reset();
+        sha256.update(publicBob1, sizeof(publicBob1));
+        sha256.finalize(hash2, sizeof(hash2));
+
+        d = clock();
+        double time2 = double(d-c)/double(CLOCKS_PER_SEC);
+
+        modularMultAdd(hash, privateAlice1, privateCA, privateAlice1, curve);
+        modularMultAdd(hash2, privateBob1, privateCA, privateBob1, curve);
+
+        uint8_t tempPriv[24];
+        uint8_t tempPub[48];
+
+        a = clock();
         randNumber = rand()%160;
-        //printf("Random number 2: %ld\n",randNumber);
+    
+        for (unsigned i = 0; i < 24; i++)
+        {
+            tempPriv[i] = pgm_read_word_near(BPVTable + 72*randNumber + i);
+        }
 
-      for (unsigned i = 0; i < 24; i++)
-		  {
-        privateAlice2[i] = (pgm_read_word_near(BPVTable + 72*randNumber + i));
-        //privateAlice2[i] = (*(BPVTable + 72*randNumber + i));
-      }
+        for (unsigned i = 24; i < 72; i++)
+        {
+            tempPub[i-24] = pgm_read_word_near(BPVTable + 72*randNumber + i);
+        }
+        
+        do
+        {
+            int is_null = 0;
+            for (unsigned j = 0; j < 7; j++)
+            {
 
-  		for (unsigned i = 24; i < 72; i++)
-  		{
-        publicAlice2[i-24] = (pgm_read_word_near(BPVTable + 72*randNumber + i));
-        //publicAlice2[i-24] = (*(BPVTable + 72*randNumber + i));
-		//printf("%02x ",publicAlice2[i-24]);
-		
-      }
-  		EllipticAdd(publicAlice2,tempPub,publicAlice2,curve);
-  		modularAdd2(privateAlice2, tempPriv, privateAlice2, curve);
+                randNumber = rand()%160;
+                for (unsigned i = 0; i < 24; i++)
+                {
+                    privateAlice2[i] = (pgm_read_word_near(BPVTable + 72*randNumber + i));
+                }
 
-	  }
-	  for (unsigned int i = 0; i < 48; i++)
-	  {
-    	if (publicAlice2[i] == 0 && publicAlice2[i+1] == 0 && i!=47)
-			is_null = 1;
-	  }
-	  if (is_null == 0)
-		break;
-	}while(1);
+                for (unsigned i = 24; i < 72; i++)
+                {
+                    publicAlice2[i-24] = (pgm_read_word_near(BPVTable + 72*randNumber + i));
+                }
+                
+                EllipticAdd(publicAlice2,tempPub,publicAlice2,curve);
+                modularAdd2(privateAlice2, tempPriv, privateAlice2, curve);
 
-	  b = clock();
-    time1 = time1+double(b-a)/double(CLOCKS_PER_SEC);
+            }
+            
+            for (unsigned int i = 0; i < 48; i++)
+            {
+                if (publicAlice2[i] == 0 && publicAlice2[i+1] == 0 && i!=47)
+                    is_null = 1;
+            }
+            
+            if (is_null == 0)
+                break;
+        
+        }while(1);
+
+        b = clock();
+        time1 = time1+double(b-a)/double(CLOCKS_PER_SEC);
 
 
-    c = clock();
-    randNumber = rand()%160;
-    for (unsigned i = 0; i < 24; i++)
-    {
-      tempPriv[i] = pgm_read_word_near(BPVTable + 72*randNumber + i);
+        c = clock();
+        randNumber = rand()%160;
+        for (unsigned i = 0; i < 24; i++)
+        {
+            tempPriv[i] = pgm_read_word_near(BPVTable + 72*randNumber + i);
+        }
+
+        for (unsigned i = 24; i < 72; i++)
+        {
+            tempPub[i-24] = pgm_read_word_near(BPVTable + 72*randNumber + i);
+        }
+
+        do
+        {
+            int is_null = 0;
+            for (unsigned j = 0; j < 7; j++)
+            {
+                randNumber = rand()%160;
+
+                for (unsigned i = 0; i < 24; i++)
+                {
+                    privateBob2[i] = pgm_read_word_near(BPVTable + 72*randNumber + i);
+                }
+
+                for (unsigned i = 24; i < 72; i++)
+                {
+                    publicBob2[i-24] = pgm_read_word_near(BPVTable + 72*randNumber + i);
+                }
+
+                EllipticAdd(publicBob2,tempPub,publicBob2,curve);
+                modularAdd2(privateBob2, tempPriv, privateBob2, curve);
+
+            }
+            
+            for (unsigned int i = 0; i < 48; i++)
+            {
+                if (publicBob2[i] == 0 && publicBob2[i+1] == 0 && i!=47)
+                    is_null = 1;
+            }
+            
+            if (is_null == 0)
+                    break;
+        
+        }while(1);
+        
+        if (!uECC_sign(privateAlice2, hash3, sizeof(hash3), sig, curve))
+        {
+            printf("\nuECC_sign() Alice failed\n");
+        }
+
+        if (!uECC_verify(publicAlice2, hash3, sizeof(hash3), sig, curve))
+        {
+            printf("uECC_verify() Alice failed\n");
+        }
+
+        if (!uECC_sign(privateBob2, hash4, sizeof(hash4), sig2, curve))
+        {
+            printf("\nuECC_sign() Bob failed\n");
+        }
+
+        if (!uECC_verify(publicBob2, hash4, sizeof(hash4), sig2, curve))
+        {
+            printf("uECC_verify() Bob failed\n");
+        }
+
+
+        d = clock();
+        time2 = time2+double(d-c)/double(CLOCKS_PER_SEC);
+
+        a = clock();
+        int r = uECC_shared_secret2(publicBob2, privateAlice2, pointAlice2, curve);
+
+        b = clock();
+        time1 = time1+double(b-a)/double(CLOCKS_PER_SEC);
+
+        if (!r)
+        {
+            cout<<"shared_secret() failed (1)\n";
+            return 0;
+        }
+
+
+        c = clock();
+        r = uECC_shared_secret2(publicAlice2, privateBob2, pointBob2, curve);
+        d = clock();
+        time2 = time2+double(d-c)/double(CLOCKS_PER_SEC);
+
+        if (!r)
+        {
+            printf("shared_secret() failed (1)\n");
+            return 0;
+        }
+
+        r = uECC_shared_secret2(publicBob1, hash2, pointAlice1, curve);
+
+        if (!r)
+        {
+            printf("shared_secret() failed (1)\n");
+            return 0;
+        }
+
+        EllipticAdd(pointAlice1, publicCA, pointAlice1, curve);
+        r = uECC_shared_secret2(pointAlice1, privateAlice1, pointAlice1, curve);
+        if (!r)
+        {
+            printf("shared_secret() failed (1)\n");
+            return 0;
+        }
+
+        r = uECC_shared_secret2(publicAlice1, hash, pointBob1, curve);
+        if (!r)
+        {
+            printf("shared_secret() failed (1)\n");
+            return 0;
+        }
+
+        EllipticAdd(pointBob1, publicCA, pointBob1, curve);
+        r = uECC_shared_secret2(pointBob1, privateBob1, pointBob1, curve);
+
+        a = clock();
+        EllipticAdd(pointAlice1, pointAlice2, pointAlice1, curve);
+
+        b = clock();
+        time1 = time1+double(b-a)/double(CLOCKS_PER_SEC);
+
+        c = clock();
+        EllipticAdd(pointBob1, pointBob2, pointBob1, curve);
+
+        d = clock();
+        time2 = time2+double(d-c)/double(CLOCKS_PER_SEC);
+
+        totaltime += time1+time2;
+        loopcount +=1 ;
+        printf("Total time taken till iteration %d :",loopcount);
+        long integraltime = 0;
+        if (totaltime > 1.0)
+        {
+            integraltime = long(totaltime);
+            progtime += integraltime;
+            totaltime = totaltime-integraltime;
+        }
+
+        printf("%.4f  seconds\n",progtime+totaltime);
+
+        if (progtime+totaltime>100)
+            break;
     }
-
-    for (unsigned i = 24; i < 72; i++)
-    {
-      tempPub[i-24] = pgm_read_word_near(BPVTable + 72*randNumber + i);
-    }
-
-    /*if (!uECC_sign(tempPriv, hash5, sizeof(hash5), sig3, curve))
-    {
-      printf("\nuECC_sign() temp Bob failed\n");
-    }
-
-    if (!uECC_verify(tempPub, hash5, sizeof(hash5), sig3, curve))
-    {
-      printf("uECC_verify() temp Bob failed\n");
-    }*/
-
-	do
-	{
-		int is_null = 0;
-		for (unsigned j = 0; j < 7; j++)
-		{
-		  randNumber = rand()%160;
-
-		  for (unsigned i = 0; i < 24; i++)
-		  {
-			privateBob2[i] = pgm_read_word_near(BPVTable + 72*randNumber + i);
-		  }
-
-		  for (unsigned i = 24; i < 72; i++)
-		  {
-			publicBob2[i-24] = pgm_read_word_near(BPVTable + 72*randNumber + i);
-			
-		  }
-		 
-		  EllipticAdd(publicBob2,tempPub,publicBob2,curve);
-		  modularAdd2(privateBob2, tempPriv, privateBob2, curve);
-
-		}
-		for (unsigned int i = 0; i < 48; i++)
-		{
-			if (publicBob2[i] == 0 && publicBob2[i+1] == 0 && i!=47)
-				is_null = 1;
-		}
-		if (is_null == 0)
-				break;
-	}while(1);
-	/*printf("PublicAlice2: \n");
-	for (int k=0;k<48;k++)
-	  {
-		  printf("%02x ", (unsigned int)(unsigned char)publicAlice2[k]);
-	  }
-	  printf("\n");
-	printf("PublicBob2: \n");
-	for (int k=0;k<48;k++)
-	  {
-		  printf("%02x ", (unsigned int)(unsigned char)publicBob2[k]);
-	  }
-	  printf("\n");
-	*/
-    if (!uECC_sign(privateAlice2, hash3, sizeof(hash3), sig, curve))
-    {
-      printf("\nuECC_sign() Alice failed\n");
-    }
-
-    if (!uECC_verify(publicAlice2, hash3, sizeof(hash3), sig, curve))
-    {
-      printf("uECC_verify() Alice failed\n");
-	  for (int k=0;k<48;k++)
-	  {
-		  printf("%02x ", (unsigned int)(unsigned char)publicAlice2[k]);
-	  }
-	  printf("\n");
-    }
-
-    if (!uECC_sign(privateBob2, hash4, sizeof(hash4), sig2, curve))
-    {
-      printf("\nuECC_sign() Bob failed\n");
-    }
-
-
-    if (!uECC_verify(publicBob2, hash4, sizeof(hash4), sig2, curve))
-    {
-      printf("uECC_verify() Bob failed\n");
-	  for (int k=0;k<48;k++)
-	  {
-		  printf("%02x ", (unsigned int)(unsigned char)publicBob2[k]);
-	  }
-	  printf("\n");
-    }
-
-
-    d = clock();
-    time2 = time2+double(d-c)/double(CLOCKS_PER_SEC);
-
-    a = clock();
-    int r = uECC_shared_secret2(publicBob2, privateAlice2, pointAlice2, curve);
-
-    b = clock();
-    time1 = time1+double(b-a)/double(CLOCKS_PER_SEC);
-
-    if (!r)
-    {
-  		cout<<"shared_secret() failed (1)\n";
-  		return 0;
-	  }
-
-
-    c = clock();
-	  r = uECC_shared_secret2(publicAlice2, privateBob2, pointBob2, curve);
-    d = clock();
-    time2 = time2+double(d-c)/double(CLOCKS_PER_SEC);
-
-    if (!r)
-    {
-  		printf("shared_secret() failed (1)\n");
-  		return 0;
-	  }
-
-	  r = uECC_shared_secret2(publicBob1, hash2, pointAlice1, curve);
-
-    if (!r)
-    {
-      printf("shared_secret() failed (1)\n");
-  		return 0;
-	  }
-
-	  EllipticAdd(pointAlice1, publicCA, pointAlice1, curve);
-	  r = uECC_shared_secret2(pointAlice1, privateAlice1, pointAlice1, curve);
-	  if (!r)
-    {
-		   printf("shared_secret() failed (1)\n");
-	     return 0;
-	  }
-
-	  r = uECC_shared_secret2(publicAlice1, hash, pointBob1, curve);
-	  if (!r)
-    {
-		   printf("shared_secret() failed (1)\n");
-       return 0;
-	  }
-
-	  EllipticAdd(pointBob1, publicCA, pointBob1, curve);
-	  r = uECC_shared_secret2(pointBob1, privateBob1, pointBob1, curve);
-
-	  a = clock();
-	  EllipticAdd(pointAlice1, pointAlice2, pointAlice1, curve);
-
-    b = clock();
-    time1 = time1+double(b-a)/double(CLOCKS_PER_SEC);
-
-    c = clock();
-	  EllipticAdd(pointBob1, pointBob2, pointBob1, curve);
-
-    d = clock();
-    time2 = time2+double(d-c)/double(CLOCKS_PER_SEC);
-
-    totaltime += time1+time2;
-    loopcount +=1 ;
-    printf("Total time taken till iteration %d :",loopcount);
-    long integraltime = 0;
-    if (totaltime > 1.0)
-    {
-      integraltime = long(totaltime);
-      progtime += integraltime;
-      totaltime = totaltime-integraltime;
-    }
-
-    printf("%.4f  seconds\n",progtime+totaltime);
-
-	  // if (memcmp(pointAlice1, pointBob1, 24) != 0)
-    // {
-		//     printf("Shared secrets are not identical!\n");
-	  // }
-    // else
-    // {
-		//     printf("Shared secrets are identical\n");
-    // }
-    if (progtime+totaltime>100)
-      break;
-	}
-	return 0;
+    return 0;
 }
