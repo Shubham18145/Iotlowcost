@@ -227,6 +227,7 @@ int main()
 
 	do
 	{
+		int is_null = 0;
 		for (unsigned j = 0; j < 7; j++)
 		{
 		  randNumber = rand()%160;
