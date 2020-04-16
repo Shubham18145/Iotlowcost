@@ -104,16 +104,6 @@ int main()
 	uECC_make_key(publicAlice1, privateAlice1, curve);
 	uECC_make_key(publicBob1, privateBob1, curve);
 
-	for (int k=0;k<48;k++)
-	  {
-		  printf("%02x ", (unsigned int)(unsigned char)publicAlice2[k]);
-	  }
-	  printf("\n");
-	for (int k=0;k<48;k++)
-	  {
-		  printf("%02x ", (unsigned int)(unsigned char)publicBob2[k]);
-	  }
-	  printf("\n");
 	/*
     if (!uECC_sign(privateAlice1, hash5, sizeof(hash5), sig3, curve))
     {
@@ -267,7 +257,19 @@ int main()
       modularAdd2(privateBob2, tempPriv, privateBob2, curve);
 
     }
-
+	printf("PublicAlice2: \n");
+	for (int k=0;k<48;k++)
+	  {
+		  printf("%02x ", (unsigned int)(unsigned char)publicAlice2[k]);
+	  }
+	  printf("\n");
+	printf("PublicBob2: \n");
+	for (int k=0;k<48;k++)
+	  {
+		  printf("%02x ", (unsigned int)(unsigned char)publicBob2[k]);
+	  }
+	  printf("\n");
+	
     if (!uECC_sign(privateAlice2, hash3, sizeof(hash3), sig, curve))
     {
       printf("\nuECC_sign() Alice failed\n");
