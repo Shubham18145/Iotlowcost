@@ -207,6 +207,8 @@ int main()
   		{
         publicAlice2[i-24] = (pgm_read_word_near(BPVTable + 72*randNumber + i));
         //publicAlice2[i-24] = (*(BPVTable + 72*randNumber + i));
+		if (publicAlice2[i-24]==0)
+			printf("-0-");
       }
   		EllipticAdd(publicAlice2,tempPub,publicAlice2,curve);
   		modularAdd2(privateAlice2, tempPriv, privateAlice2, curve);
@@ -252,6 +254,8 @@ int main()
       for (unsigned i = 24; i < 72; i++)
       {
         publicBob2[i-24] = pgm_read_word_near(BPVTable + 72*randNumber + i);
+		if (publicBob2[i-24]==0)
+			printf("-0-");
       }
       EllipticAdd(publicBob2,tempPub,publicBob2,curve);
       modularAdd2(privateBob2, tempPriv, privateBob2, curve);
