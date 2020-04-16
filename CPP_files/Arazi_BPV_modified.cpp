@@ -95,21 +95,7 @@ int main()
     uint8_t hash6[24] = {0};
     uint8_t sig4[48] = {0};
 
-    // memset(hash,0,sizeof(hash));
-    // memset(hash2,0,sizeof(hash2));
-    // memset(hash3,0,sizeof(hash3));
-    // memset(hash4,0,sizeof(hash4));
-    // memset(hash5,0,sizeof(hash5));
-    // memset(hash6,0,sizeof(hash6));
-    // memset(sig,0,sizeof(sig));
-    // memset(sig2,0,sizeof(sig2));
-    // memset(sig3,0,sizeof(sig3));
-    // memset(sig4,0,sizeof(sig4));
-    // memset(privateBob1,0,sizeof(privateBob1));
-    // memset(publicBob1,0,sizeof(publicBob1));
-
-
-
+    
 	  clock_t a,b,c,d;
 
 	  long randNumber;
@@ -118,6 +104,7 @@ int main()
 	  uECC_make_key(publicAlice1, privateAlice1, curve);
 	  uECC_make_key(publicBob1, privateBob1, curve);
 
+	/*
     if (!uECC_sign(privateAlice1, hash5, sizeof(hash5), sig3, curve))
     {
       printf("\nuECC_sign() Alice failed\n");
@@ -137,7 +124,8 @@ int main()
     {
       printf("uECC_verify() Bob failed\n");
     }
-
+	*/
+	
     a = clock();
 	  sha256.reset();
 	  sha256.update(publicAlice1, sizeof(publicAlice1));
