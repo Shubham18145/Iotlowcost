@@ -95,6 +95,29 @@ int main()
     int status2 = uECC_make_key(publicAlice1, privateAlice1, curve);
     int status3 = uECC_make_key(publicBob1, privateBob1, curve);
 
+	for (int k=0;k<48;k++)
+	  {
+		  printf("%02x ", (unsigned int)(unsigned char)publicAlice1[k]);
+	  }
+	printf("\n");
+	for (int k=0;k<48;k++)
+	  {
+		  printf("%02x ", (unsigned int)(unsigned char)privateAlice1[k]);
+	  }
+	  printf("\n");
+	for (int k=0;k<48;k++)
+	  {
+		  printf("%02x ", (unsigned int)(unsigned char)publicBob1[k]);
+	  }
+	  printf("\n");
+	
+	for (int k=0;k<48;k++)
+	  {
+		  printf("%02x ", (unsigned int)(unsigned char)privateBob1[k]);
+	  }
+	  printf("\n");
+	
+	
     // if (status1==0)
     //   printf("uECC_make_key(publicCA, privateCA, curve) failed\n");
     // if (status2==0)
