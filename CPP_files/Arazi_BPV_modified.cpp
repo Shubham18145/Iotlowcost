@@ -159,6 +159,7 @@ int main()
             {
                 if (publicAlice2[i] == 0 && publicAlice2[i+1] == 0 && i!=47)
                     is_null = 1;
+                    break;
             }
             
             if (is_null == 0)
@@ -208,6 +209,7 @@ int main()
             {
                 if (publicBob2[i] == 0 && publicBob2[i+1] == 0 && i!=47)
                     is_null = 1;
+                    break;
             }
             
             if (is_null == 0)
